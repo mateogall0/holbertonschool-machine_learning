@@ -7,7 +7,7 @@ def add_matrices2D(mat1, mat2):
     Adds two matrices element-wise
     """
     a = []
-    if len(mat1[0]) != len(mat2[0]):
+    if (len(mat1[0]) != len(mat2[0])) or mat1 == []:
         return None
     for x in range(len(mat1)):
         for y in range(len(mat2)):
