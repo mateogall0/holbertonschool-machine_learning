@@ -2,7 +2,6 @@
 """Module"""
 
 
-
 def cat_matrices2D(mat1, mat2, axis=0):
     """
     Concatenates two matrices along a specific axis
