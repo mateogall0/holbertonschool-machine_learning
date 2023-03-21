@@ -2,7 +2,7 @@
 """Module"""
 
 
-def np_shape(matrix): 
+def np_shape(matrix):
     """
     Calculate shape of a Numpy array
     """
