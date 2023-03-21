@@ -6,6 +6,14 @@ def cat_matrices2D(mat1, mat2, axis=0):
     """
     Concatenates two matrices along a specific axis
     """
+    for x in mat1:
+        for y in x:
+            if y < 0:
+                return None
+    for x in mat2:
+        for y in x:
+            if y < 0:
+                return None
     if axis == 0:
         return mat1 + mat2
     new = []
