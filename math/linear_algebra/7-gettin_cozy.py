@@ -9,6 +9,10 @@ def cat_matrices2D(mat1, mat2, axis=0):
     if axis == 0:
         return mat1 + mat2
     new = []
-    for i in range(len(mat2)):
+    if mat1 < mat2:
+        length = mat2
+    else:
+        length = mat1
+    for i in range(length):
         new.append(mat1[i] + mat2[i])
     return new
