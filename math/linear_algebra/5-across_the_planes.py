@@ -14,5 +14,5 @@ def add_matrices2D(mat1, mat2):
             for y in range(len(mat2)):
                 a.append(mat1[x][y] + mat2[x][y])
     except Exception:
-        return None
+        return []
     return [a[:-2], a[2:]]
