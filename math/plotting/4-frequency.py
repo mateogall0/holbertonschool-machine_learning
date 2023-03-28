@@ -11,3 +11,4 @@ plt.title('Project A')
 plt.hist(student_grades, bins=10, edgecolor='black')
 plt.xlim(0)
 plt.ylim(0, 30)
+plt.show
