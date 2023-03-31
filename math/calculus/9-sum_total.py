@@ -3,11 +3,13 @@
     Sigma
 """
 
+import numpy as np
+
 
 def summation_i_squared(n):
     """Summation"""
     if (type(n) != int):
         return
-    if (n < 1):
-        return 0
-    return n * n + summation_i_squared(n - 1)
+    a = np.array(list(range(1, n)))
+    s = np.power(a, 2)
+    return sum(s)
