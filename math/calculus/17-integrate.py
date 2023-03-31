@@ -8,7 +8,11 @@ def poly_integral(poly, C=0):
     """
     if type(poly) != list or type(C) != int:
         return
+    if poly == []:
+        return None
     result = [C]
+    if poly == [0]:
+        return result
     idx = 1
     for i in poly:
         result.append(i / idx)
