@@ -7,13 +7,12 @@ def poly_derivative(poly):
     result = []
     if type(poly) != list:
         return None
-    if len(poly) == 1:
-        return [0]
     for idx, i in enumerate(poly):
         if type(i) != int:
             return None
         if idx == 0:
             continue
         result.append(i * idx)
-
+    if len(result) == 0:
+        return None
     return result
