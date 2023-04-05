@@ -11,7 +11,6 @@ class Poisson:
     """
     e = 2.7182818285
 
-
     def __init__(self, data=None, lambtha=1.):
         if data is None:
             if lambtha <= 0:
@@ -25,9 +24,13 @@ class Poisson:
             self.lambtha = sum(data) / len(data)
         self.lambtha = float(self.lambtha)
 
-
     def pmf(self, k):
+        """
+            Calculates the value of the PMF for a given number of “successes”
+        """
         k = int(k)
+        if k < 1:
+            return 0
 
         factorial = 1
         for i in range(1, k+1):
