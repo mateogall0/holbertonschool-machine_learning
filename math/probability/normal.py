@@ -52,6 +52,9 @@ class Normal:
         return (1 / (self.stddev * (self.pi * 2) ** 0.5)) * s
 
     def erf(self, x):
+        """
+            Erf function
+        """
         s = x - ((x ** 3)/3) + ((x ** 5)/10) - ((x ** 7)/42) + ((x ** 9)/216)
         return ((2 * s) / self.pi ** 0.5)
 
