@@ -42,11 +42,11 @@ class Poisson:
         """
         Calculates the value of the CDF for a given number of “successes”
         """
-        factorial = 1
-        for i in range(1, k + 1):
-            factorial *= i
-        result = 0
-        for i in range(k + 1):
-            result += (self.lambtha ** k) * (self.e ** -self.lambtha)
-            result /= factorial
-        return result
+        k = int(k)
+        if k < 0:
+            return 0
+        else:
+            res = 0
+            for i in range(k+1):
+                res += self.pmf(i)
+            return res
