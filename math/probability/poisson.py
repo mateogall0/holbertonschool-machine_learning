@@ -10,6 +10,7 @@ class Poisson:
         represents a poisson distribution
     """
     e = 2.7182818285
+    pi = 3.1415926536
 
     def __init__(self, data=None, lambtha=1.):
         if data is None:
@@ -36,3 +37,16 @@ class Poisson:
         for i in range(1, k+1):
             factorial *= i
         return self.lambtha ** k * self.e**(-self.lambtha) / factorial
+
+    def cdf(self, k):
+        """
+        Calculates the value of the CDF for a given number of “successes”
+        """
+        factorial = 1
+        for i in range(1, k + 1):
+            factorial *= i
+        result = 0
+        for i in range(k + 1):
+            result += (self.lambtha ** k) * (self.e ** -self.lambtha)
+            result /= factorial
+        return result
