@@ -62,3 +62,14 @@ class Binomial:
             success_prob = self.p ** k
             failure_prob = (1 - self.p) ** (self.n - k)
             return coefficient * success_prob * failure_prob
+
+    def cdf(self, k):
+        """
+            Calculates the value of the CDF for a given number of “successes”
+            F(k;n,p) = Σ(i=0 to k) (n choose i) * p^i * (1-p)^(n-i)
+        """
+        cdf = 0
+        for i in range(k + 1):
+            b = self._binomial_coefficient(self.n, i)
+            cdf += b * self.p**i * (1 - self.p)**(self.n - i)
+        return cdf
