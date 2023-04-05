@@ -29,3 +29,21 @@ class Binomial:
             raise ValueError("n must be a positive value")
         if self.p <= 0 or self.p >= 1:
             raise ValueError("p must be greater than 0 and less than 1")
+
+    def pmf(self, k):
+        """
+            Calculates the value of the PMF for a given number of “successes”
+            P(X=k) = (n choose k) * p^k * (1-p)^(n-k)
+            n choose k = n! / (k! * (n-k)!)
+        """
+        nfct = 1
+        for i in range(1, self.n+1):
+            nfct *= i
+        kfct = 1
+        for i in range(1, k+1):
+            kfct *= i
+        nkfct = 1
+        for i in range(1, (self.n-k)+1):
+            nkfct *= i
+        choose = nfct / (kfct * nkfct)
+        return choose * self.p**k * (1-self.p)**(self.n-k)
