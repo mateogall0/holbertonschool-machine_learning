@@ -9,6 +9,9 @@ class Poisson:
         Poisson class:
         represents a poisson distribution
     """
+    e = 2.7182818285
+
+
     def __init__(self, data=None, lambtha=1.):
         if data is None:
             if lambtha <= 0:
@@ -21,3 +24,12 @@ class Poisson:
                 raise ValueError('data must contain multiple values')
             self.lambtha = sum(data) / len(data)
         self.lambtha = float(self.lambtha)
+
+
+    def pmf(self, k):
+        k = int(k)
+
+        factorial = 1
+        for i in range(1, k+1):
+            factorial *= i
+        return self.lambtha ** k * self.e**(-self.lambtha) / factorial
