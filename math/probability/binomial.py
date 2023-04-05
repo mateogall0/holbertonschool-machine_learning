@@ -30,7 +30,7 @@ class Binomial:
         if self.p <= 0 or self.p >= 1:
             raise ValueError("p must be greater than 0 and less than 1")
 
-    def factorial(self, n):
+    def _factorial(self, n):
         """
             Factorial function
             for simplification
@@ -38,7 +38,15 @@ class Binomial:
         if n == 0:
             return 1
         else:
-            return n * self.factorial(n-1)
+            return n * self._factorial(n-1)
+
+    def _binomial_coefficient(self, n, k):
+        """
+            Binomial coefficient
+        """
+        numerator = self._factorial(n)
+        denominator = self._factorial(k) * self._factorial(n-k)
+        return numerator // denominator
 
     def pmf(self, k):
         """
@@ -46,10 +54,11 @@ class Binomial:
             P(X=k) = (n choose k) * p^k * (1-p)^(n-k)
             n choose k = n! / (k! * (n-k)!)
         """
-        if k < 0:
+        k = int(k)
+        if k < 0 or k > self.n:
             return 0
-        nfct = self.factorial(self.n)
-        kfct = self.factorial(k)
-        nkfct = self.factorial(self.n - k)
-        choose = nfct // (kfct * nkfct)
-        return choose * self.p**k * (1-self.p)**(self.n-k)
+        else:
+            coefficient = self._binomial_coefficient(self.n, k)
+            success_prob = self.p ** k
+            failure_prob = (1 - self.p) ** (self.n - k)
+            return coefficient * success_prob * failure_prob
