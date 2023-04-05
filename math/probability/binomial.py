@@ -46,6 +46,8 @@ class Binomial:
             P(X=k) = (n choose k) * p^k * (1-p)^(n-k)
             n choose k = n! / (k! * (n-k)!)
         """
+        if k < 0:
+            return 0
         nfct = self.factorial(self.n)
         kfct = self.factorial(k)
         nkfct = self.factorial(self.n - k)
