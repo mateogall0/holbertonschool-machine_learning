@@ -30,7 +30,7 @@ class Poisson:
             Calculates the value of the PMF for a given number of “successes”
         """
         k = int(k)
-        if k < 1:
+        if k < 0:
             return 0
 
         factorial = 1
@@ -45,8 +45,7 @@ class Poisson:
         k = int(k)
         if k < 0:
             return 0
-        else:
-            res = 0
-            for i in range(k+1):
-                res += self.pmf(i)
-            return res
+        cdf_value = 0
+        for i in range(k + 1):
+            cdf_value += self.pmf(i)
+        return cdf_value
