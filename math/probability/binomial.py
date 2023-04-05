@@ -13,17 +13,19 @@ class Binomial:
     pi = 3.1415926536
 
     def __init__(self, data=None, n=1, p=0.5):
-        if data is not None:
+        if data is None:
+            self.n = int(n)
+            self.p = float(p)
+        else:
             if not isinstance(data, list):
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
-            self.n = round(sum(data) / len(data))
-            self.p = sum(data) / (self.n * 1.0)
-        else:
-            if n <= 0:
-                raise ValueError("n must be a positive value")
-            if p <= 0 or p >= 1:
-                raise ValueError("p must be greater than 0 and less than 1")
-            self.n = int(n)
-            self.p = float(p)
+            mean = sum(data) / len(data)
+            variance = sum((x - mean)**2 for x in data) / (len(data) - 1)
+            self.n = round(mean**2 / (mean - variance))
+            self.p = mean / self.n
+        if self.n <= 0:
+            raise ValueError("n must be a positive value")
+        if self.p <= 0 or self.p >= 1:
+            raise ValueError("p must be greater than 0 and less than 1")
