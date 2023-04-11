@@ -95,7 +95,7 @@ class Neuron:
 
         data = []
 
-        for iteration in range(iterations):
+        for iteration in range(iterations + 1):
             A = self.forward_prop(X)
             cost = self.cost(Y, A)
             self.gradient_descent(X, Y, A, alpha)
