@@ -95,13 +95,13 @@ class Neuron:
 
         data = []
 
-        for iteration in range(iterations + 1):
+        for i in range(iterations + 1):
             A = self.forward_prop(X)
             cost = self.cost(Y, A)
             self.gradient_descent(X, Y, A, alpha)
-            if verbose and iteration % step == 0:
-                data.append({iteration: cost})
-                print(f'Cost after {iteration} iterations: {cost}')
+            if verbose and (i % step == 0 or i % iterations == 0):
+                data.append({i: cost})
+                print(f'Cost after {i} iterations: {cost}')
 
         if graph and len(data) > 0:
             x = [list(d.keys())[0] for d in data]
