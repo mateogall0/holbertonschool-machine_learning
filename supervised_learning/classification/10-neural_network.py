@@ -62,9 +62,6 @@ class NeuralNetwork:
         """
             Calculates the forward propagation of the neurons
         """
-        x = np.dot(self.W1, X) + self.b1
-        y = np.dot(self.W2, self._A1) + self.b2
-
-        self._A1 = self.sigmoid(x)
-        self._A2 = self.sigmoid(y)
+        self._A1 = self.sigmoid(np.dot(self._W1, X) + self._b1)
+        self._A2 = self.sigmoid(np.dot(self._W2, self._A1) + self._b2)
         return self._A1, self._A2
