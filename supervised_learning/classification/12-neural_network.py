@@ -82,6 +82,6 @@ class NeuralNetwork:
         """
         A1, A2 = self.forward_prop(X)
         A = A1 * A2
-        prediction = np.where((A >= 0.5), 1, 0)[:1:]
+        prediction = np.where((A >= 0.5), 1, 0).reshape(1, -1)
         cost2 = self.cost(Y, A2)
         return prediction, cost2
