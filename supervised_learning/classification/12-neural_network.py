@@ -81,6 +81,7 @@ class NeuralNetwork:
             Evaluates the neural network's predictions
         """
         A1, A2 = self.forward_prop(X)
-        prediction = np.where(np.logical_and(A2 >= 0.5, A1 >= 0.5), 1, 0)
+        A = A1 * A2
+        prediction = np.where((A >= 0.5), 1, 0)[:1:]
         cost2 = self.cost(Y, A2)
-        return prediction[:1], cost2
+        return prediction, cost2
