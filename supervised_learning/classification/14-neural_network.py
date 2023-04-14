@@ -114,27 +114,10 @@ class NeuralNetwork:
             raise TypeError('alpha must be a float')
         if alpha < 0.0:
             raise ValueError('alpha must be positive')
-        if verbose or graph:
-            if type(step) != int:
-                raise TypeError('step must be an integer')
-            if step <= 0 or step > iterations:
-                raise ValueError('step must be positive and <= iterations')
 
-        data = []
-
-        for i in range(iterations + 1):
+        for _ in range(iterations):
             A1, A2 = self.forward_prop(X)
-            cost = self.cost(Y, A1)
-            self.gradient_descent(X, Y, A1, A2, alpha)
-            if verbose and (i % step == 0 or i % iterations == 0):
-                data.append({i: cost})
-                print(f'Cost after {i} iterations: {cost}')
-        if graph and len(data) > 0:
-            x = [list(d.keys())[0] for d in data]
-            y = [list(d.values())[0] for d in data]
-            plt.plot(x, y)
-            plt.xlabel('iteration')
-            plt.ylabel('cost')
-            plt.title('Training Cost')
-            plt.show()
+            self.cost(Y, A1)
+            self.gradient_descent(X, Y, A1, A1, alpha)
+
         return self.evaluate(X, Y)
