@@ -84,4 +84,7 @@ class NeuralNetwork:
         A = A1 * A2
         prediction = np.where((A >= 0.5), 1, 0)
         cost2 = self.cost(Y, A2)
-        return prediction[-1:], cost2
+        result = prediction[0]
+        for i in prediction[1:]:
+            result *= i
+        return result, cost2
