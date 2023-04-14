@@ -101,7 +101,7 @@ class NeuralNetwork:
         self.__W1 -= alpha * dw1
         self.__b1 -= alpha * db1
 
-    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
+    def train(self, X, Y, iterations=5000, alpha=0.05):
         """
             Trains the neural network
         """
