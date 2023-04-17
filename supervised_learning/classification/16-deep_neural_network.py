@@ -21,7 +21,7 @@ class DeepNeuralNetwork:
         if not all(map(lambda item: isinstance(item, int), layers)):
             raise ValueError('layers must be a list of positive integers')
         if not all(map(lambda item: item >= 0, layers)):
-            raise ValueError('layers must be a list of positive integers')
+            raise TypeError('layers must be a list of positive integers')
         self.L = len(layers)
         self.cache = {}
         self.weights = {}
