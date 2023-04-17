@@ -98,22 +98,26 @@ class DeepNeuralNetwork:
             Calculates one pass of gradient descent on the neural network
         """
         m = Y.shape[1]  # Number of examples
+
         # Compute the gradient of the cost with respect to A[L]
-        dZ = cache['A' + str(self.L)] - Y
+        dZ = self.cache['A' + str(self.L)] - Y
         # Compute the gradient of the cost with respect to W[L]
-        dW = np.matmul(dZ, cache['A' + str(self.L - 1)].T) / m
+        dW = np.matmul(dZ, self.cache['A' + str(self.L - 1)].T) / m
         # Compute the gradient of the cost with respect to b[L]
         db = np.sum(dZ, axis=1, keepdims=True) / m
-        self.__weights['W' + str(self.L)] -= alpha * dW  # Update W[L]
-        self.__weights['b' + str(self.L)] -= alpha * db  # Update b[L]
+        # Update W[L]
+        self.weights['W' + str(self.L)] -= alpha * dW
+        # Update b[L]
+        self.weights['b' + str(self.L)] -= alpha * db
 
         for i in range(self.L - 1, 0, -1):
             # Compute the gradient of the cost with respect to A[i]
-            dZ = np.matmul(self.__weights['W' + str(i + 1)].T, dZ) *\
-                (cache['A' + str(i)] * (1 - cache['A' + str(i)]))
+            dZ = np.matmul(self.weights['W' + str(i + 1)].T, dZ) * (self.sigmoid(self.cache['A' + str(i)]))
             # Compute the gradient of the cost with respect to W[i]
-            dW = np.matmul(dZ, cache['A' + str(i - 1)].T) / m
+            dW = np.matmul(dZ, self.cache['A' + str(i - 1)].T) / m
             # Compute the gradient of the cost with respect to b[i]
             db = np.sum(dZ, axis=1, keepdims=True) / m
-            self.__weights['W' + str(i)] -= alpha * dW  # Update W[i]
-            self.__weights['b' + str(i)] -= alpha * db  # Update b[i]
+            # Update W[i]
+            self.weights['W' + str(i)] -= alpha * dW
+            # Update b[i]
+            self.weights['b' + str(i)] -= alpha * db
