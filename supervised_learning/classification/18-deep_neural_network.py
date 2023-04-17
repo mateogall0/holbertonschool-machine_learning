@@ -58,19 +58,14 @@ class DeepNeuralNetwork:
         """
             Calculates the forward propagation of the neural network
         """
-        A = X
-        for l in range(1, self.L):
-            Aprv = A
-            W = self.weights['W' + str(l)]
-            b = self.weights['b' + str(l)]
-            Z = np.dot(W, Aprv) + b
-            A = np.maximum(0, Z)
-            self.__cache['A' + str(l)] = (A, W, b, Z)
+        self.__cache['A0'] = X
 
-        WL = self.__weights['W' + str(self.L)]
-        bL = self.__weights['b' + str(self.L)]
-        ZL = np.dot(WL, A) + bL
-        AL = self.sigmoid(ZL)
-        self.__cache['A' + str(self.L)] = (AL, WL, bL, ZL)
+        for i in range(1, self.L + 1):
+            W = self.weights['W' + str(i)]
+            b = self.weights['b' + str(i)]
+            Aprv = self.cache['A' + str(i - 1)]
+            Z = np.matmul(W, Aprv) + b  # Weighted input Z matmuling and adding
+            A = self.sigmoid(Z)  # Apllies sigmoid activation to Z
+            self.__cache['A' + str(i)] = A  # Saves the activated output A
 
-        return AL, self.__cache
+        return A, self.cache
