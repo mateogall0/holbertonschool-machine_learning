@@ -97,29 +97,17 @@ class DeepNeuralNetwork:
         """
             Calculates one pass of gradient descent on the neural network
         """
-        m = Y.shape[1]  # Number of examples
+        weights = self.__weights
+        m = Y.shape[1]
+        err = cache["A" + str(self.L)] - Y
 
-        # Compute the gradient of the cost with respect to A[L]
-        dZ = self.cache['A' + str(self.L)] - Y
-        # Compute the gradient of the cost with respect to W[L]
-        dW = np.matmul(dZ, self.cache['A' + str(self.L - 1)].T) / m
-        # Compute the gradient of the cost with respect to b[L]
-        db = np.sum(dZ, axis=1, keepdims=True) / m
-        # Update W[L]
-        self.weights['W' + str(self.L)] -= alpha * dW
-        # Update b[L]
-        self.weights['b' + str(self.L)] -= alpha * db
-
-        for i in range(self.L - 1, 0, -1):
-            # Compute the gradient of the cost with respect to A[i]
-            dA = np.matmul(self.weights['W' + str(i + 1)].T, dZ)
-            # Compute the gradient of the cost with respect to Z[i]
-            dZ = dA * (self.cache['A' + str(i)] * (1 - self.cache['A' + str(i)]))
-            # Compute the gradient of the cost with respect to W[i]
-            dW = np.matmul(dZ, self.cache['A' + str(i - 1)].T) / m
-            # Compute the gradient of the cost with respect to b[i]
-            db = np.sum(dZ, axis=1, keepdims=True) / m
-            # Update W[i]
-            self.weights['W' + str(i)] -= alpha * dW
-            # Update b[i]
-            self.weights['b' + str(i)] -= alpha * db
+        for i in range(self.L, 0, -1):
+            W, b = "W{}".format(i), "b{}".format(i)
+            A = "A{}".format(i - 1)
+            # Compute the gradient of bias
+            bias_gradient = np.sum(err, axis=1, keepdims=True) / m
+            # Calculate the gradient of the weights
+            Wg = np.matmul(err, cache[A].T) / m
+            err = np.matmul(weights[W].T, err)*(cache[A]*(1-cache[A]))
+            weights[W] -= alpha * Wg
+            weights[b] -= alpha * bias_gradient
