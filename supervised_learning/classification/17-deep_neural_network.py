@@ -39,11 +39,11 @@ class DeepNeuralNetwork:
     @property
     def L(self):
         return self.__L
-    
+
     @property
     def cache(self):
         return self.__cache
-    
+
     @property
     def weights(self):
         return self.__weights
