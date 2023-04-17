@@ -112,7 +112,9 @@ class DeepNeuralNetwork:
 
         for i in range(self.L - 1, 0, -1):
             # Compute the gradient of the cost with respect to A[i]
-            dZ = np.matmul(self.weights['W' + str(i + 1)].T, dZ) * (self.sigmoid(self.cache['A' + str(i)]))
+            dA = np.matmul(self.weights['W' + str(i + 1)].T, dZ)
+            # Compute the gradient of the cost with respect to Z[i]
+            dZ = dA * (self.cache['A' + str(i)] * (1 - self.cache['A' + str(i)]))
             # Compute the gradient of the cost with respect to W[i]
             dW = np.matmul(dZ, self.cache['A' + str(i - 1)].T) / m
             # Compute the gradient of the cost with respect to b[i]
