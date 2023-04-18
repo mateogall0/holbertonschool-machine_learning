@@ -149,7 +149,10 @@ class DeepNeuralNetwork:
         """
             Saves the instance object to a file in pickle format
         """
-        with open(filename + '.pkl', 'wb') as f:
+        a = filename.split('.')
+        if len(a) < 2 or a[1] != 'pkl':
+            filename += '.pkl'
+        with open(filename, 'wb') as f:
             pickle.dump(self, f)
 
     @staticmethod
