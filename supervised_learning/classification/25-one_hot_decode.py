@@ -15,16 +15,16 @@ def one_hot_decode(one_hot):
         return None
     try:
         one_decode = np.ndarray(shape=(one_hot.shape[1]), dtype=int)
-    except:
+        trnsp = one_hot.T
+
+        for j, item in enumerate(trnsp):
+            for i, it in enumerate(item):
+                if it == 1.:
+                    one_decode[j] = i
+                    break
+            else:
+                return None
+
+        return one_decode
+    except Exception:
         return None
-    trnsp = one_hot.T
-
-    for j, item in enumerate(trnsp):
-        for i, it in enumerate(item):
-            if it == 1.:
-                one_decode[j] = i
-                break
-        else:
-            return None
-
-    return one_decode
