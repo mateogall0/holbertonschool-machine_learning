@@ -14,7 +14,7 @@ def one_hot_decode(one_hot):
     if type(one_hot) != np.ndarray:
         return None
 
-    one_decode = np.ndarray(shape=(one_hot.shape[1]), dtype=int)
+    one_decode = np.ndarray(shape=(one_hot.shape[0]), dtype=int)
 
     trnsp = one_hot.T
 
