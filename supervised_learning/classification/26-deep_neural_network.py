@@ -66,7 +66,7 @@ class DeepNeuralNetwork:
             W = self.weights['W' + str(i)]
             b = self.weights['b' + str(i)]
             Aprv = self.__cache['A' + str(i - 1)]  # corrected variable name
-            Z = np.matmul(W, Aprv) + b  # Weighted input Z matrix multiplication and addition
+            Z = np.matmul(W, Aprv) + b  # Weighted input Z matrix
             A = self.sigmoid(Z)  # Applies sigmoid activation to Z
             self.__cache['A' + str(i)] = A  # Saves the activated output A
 
@@ -95,28 +95,20 @@ class DeepNeuralNetwork:
         """
             Calculates one pass of gradient descent on the neural network
         """
+        weights = self.__weights
         m = Y.shape[1]
-        for i in reversed(range(self.__L)):
-            # create keys to access weights(W), biases(b) and store in cache
-            key_w = 'W' + str(i + 1)
-            key_b = 'b' + str(i + 1)
-            key_cache = 'A' + str(i + 1)
-            key_cache_dw = 'A' + str(i)
-            # Activation
-            A = cache[key_cache]
-            A_dw = cache[key_cache_dw]
-            if i == self.__L - 1:
-                dz = A - Y
-                W = self.__weights[key_w]
-            else:
-                da = A * (1 - A)
-                dz = np.matmul(W.T, dz)
-                dz = dz * da
-                W = self.__weights[key_w]
-            dw = np.matmul(A_dw, dz.T) / m
-            db = np.sum(dz, axis=1, keepdims=True) / m
-            self.__weights[key_w] = self.__weights[key_w] - alpha * dw.T
-            self.__weights[key_b] = self.__weights[key_b] - alpha * db
+        err = cache["A" + str(self.L)] - Y
+
+        for i in range(self.L, 0, -1):
+            W, b = "W{}".format(i), "b{}".format(i)
+            A = "A{}".format(i - 1)
+            # Compute the gradient of bias
+            bias_gradient = np.sum(err, axis=1, keepdims=True) / m
+            # Calculate the gradient of the weights
+            Wg = np.matmul(err, cache[A].T) / m
+            err = np.matmul(weights[W].T, err)*(cache[A]*(1-cache[A]))
+            weights[W] -= alpha * Wg
+            weights[b] -= alpha * bias_gradient
 
     def train(self, X, Y, iterations=5000, alpha=0.05,
               verbose=True, graph=True, step=100):
