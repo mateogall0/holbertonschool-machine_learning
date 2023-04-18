@@ -126,8 +126,7 @@ class DeepNeuralNetwork:
 
         data = []
 
-        for i in range(iterations + 1
-                       ):
+        for i in range(iterations + 1):
             A, cache = self.forward_prop(X)
             cost = self.cost(Y, A)
             self.gradient_descent(Y, cache, alpha)
@@ -160,6 +159,8 @@ class DeepNeuralNetwork:
         """
             Loads a pickled DeepNeuralNetwork object
         """
+        if not filename.endswith('.pkl'):
+            filename += '.pkl'
         try:
             with open(filename, 'rb') as f:
                 return pickle.load(f)
