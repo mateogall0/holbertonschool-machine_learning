@@ -65,12 +65,12 @@ class DeepNeuralNetwork:
         for i in range(1, self.L + 1):
             W = self.weights['W' + str(i)]
             b = self.weights['b' + str(i)]
-            Aprv = self.cache['A' + str(i - 1)]
-            Z = np.matmul(W, Aprv) + b  # Weighted input Z matmuling and adding
-            A = self.sigmoid(Z)  # Apllies sigmoid activation to Z
+            Aprv = self.__cache['A' + str(i - 1)]  # corrected variable name
+            Z = np.matmul(W, Aprv) + b  # Weighted input Z matrix multiplication and addition
+            A = self.sigmoid(Z)  # Applies sigmoid activation to Z
             self.__cache['A' + str(i)] = A  # Saves the activated output A
 
-        return A, self.cache
+        return A, self.__cache
 
     def cost(self, Y, A):
         """
@@ -159,10 +159,8 @@ class DeepNeuralNetwork:
         """
             Loads a pickled DeepNeuralNetwork object
         """
-        if not filename.endswith('.pkl'):
-            filename += '.pkl'
         try:
-            with open(filename, 'rb') as f:
+            with open(filename, "rb") as f:
                 return pickle.load(f)
-        except Exception:
+        except FileNotFoundError:
             return None
