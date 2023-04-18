@@ -13,8 +13,10 @@ def one_hot_decode(one_hot):
     """
     if not isinstance(one_hot, np.ndarray):
         return None
-    one_decode = np.ndarray(shape=(one_hot.shape[1]), dtype=int)
-
+    try:
+        one_decode = np.ndarray(shape=(one_hot.shape[1]), dtype=int)
+    except:
+        return None
     trnsp = one_hot.T
 
     for j, item in enumerate(trnsp):
