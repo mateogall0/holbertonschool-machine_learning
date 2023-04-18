@@ -110,7 +110,8 @@ class DeepNeuralNetwork:
             weights[W] -= alpha * Wg
             weights[b] -= alpha * bias_gradient
 
-    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
+    def train(self, X, Y, iterations=5000, alpha=0.05,
+              verbose=True, graph=True, step=100):
         """
             Trains the deep neural network
         """
@@ -149,8 +150,7 @@ class DeepNeuralNetwork:
         """
             Saves the instance object to a file in pickle format
         """
-        a = filename.split('.')
-        if len(a) < 2 or a[1] != 'pkl':
+        if not filename.endswith('.pkl'):
             filename += '.pkl'
         with open(filename, 'wb') as f:
             pickle.dump(self, f)
