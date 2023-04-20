@@ -12,7 +12,7 @@ def evaluate(X, Y, save_path):
         Evaluates the output of a neural network
     """
     graph = tf.Graph()
-	with graph.as_default():
+    with graph.as_default():
         saver = tf.train.import_meta_graph(save_path + '.meta')
 
     # Extract the tensors we need from the graph's collection
