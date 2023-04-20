@@ -13,54 +13,75 @@ create_placeholders = __import__('0-create_placeholders').create_placeholders
 create_train_op = __import__('5-create_train_op').create_train_op
 forward_prop = __import__('2-forward_prop').forward_prop
 
+
 def train(X_train, Y_train, X_valid, Y_valid, layer_sizes,
-    activations, alpha, iterations, save_path="/tmp/model.ckpt"):
-	# Set random seed
-    tf.set_random_seed(42)
-    
-    # Get input and output sizes
-    input_size = X_train.shape[1]
-    output_size = Y_train.shape[1]
+          activations, alpha, iterations, save_path="/tmp/model.ckpt"):
+    """
+    Builds, trains, and saves a neural network classifier.
+    """
+    # Initialize TensorFlow's random seed to a fixed value.
+    tf.set_random_seed(0)
 
-    # Create placeholders
-    x, y = create_placeholders(input_size, output_size)
+    # Get the number of training examples (m) and the
+    # number of features (nx) from the training input data.
 
-    # Forward propagation
+    m, nx = X_train.shape
+    # Get the number of classes (classes) from the training labels data.
+
+    classes = Y_train.shape[1]
+
+    # Create TensorFlow placeholders (x and y) for the input data and labels.
+    x, y = create_placeholders(nx, classes)
+
+    # Build the neural network by calling the forward_prop function with
+    # the specified layer sizes and activation functions.
     y_pred = forward_prop(x, layer_sizes, activations)
 
-    # Loss function
+    # Calculate the loss and accuracy of the neural network using the
+    # calculate_loss and calculate_accuracy functions, respectively.
     loss = calculate_loss(y, y_pred)
-
-    # Accuracy function
     accuracy = calculate_accuracy(y, y_pred)
 
-    # Training operation
+    # Create the training operation using the create_train_op function
+    # with the calculated loss and the specified learning rate.
     train_op = create_train_op(loss, alpha)
 
-    # Initialize variables
+    # Create a TensorFlow session and initialize all variables.
     init = tf.global_variables_initializer()
-
-    # Create session
     with tf.Session() as sess:
-
-        # Initialize variables
         sess.run(init)
 
-        # Train the model
-        for i in range(iterations):
-            _, train_cost, train_acc = sess.run([train_op, loss, accuracy], feed_dict={x: X_train, y: Y_train})
-            valid_cost, valid_acc = sess.run([loss, accuracy], feed_dict={x: X_valid, y: Y_valid})
+        # Add the input data placeholder (x), label placeholder (y),
+        # predicted labels tensor (y_pred), loss tensor, accuracy tensor, and
+        # training operation to the graph's collection for easy access later.
+        tf.add_to_collection('x', x)
+        tf.add_to_collection('y', y)
+        tf.add_to_collection('y_pred', y_pred)
+        tf.add_to_collection('loss', loss)
+        tf.add_to_collection('accuracy', accuracy)
+        tf.add_to_collection('train_op', train_op)
 
-            if i == 0 or (i + 1) % 100 == 0 or i == iterations - 1:
-                print("After {} iterations:".format(i+1))
-                print("\tTraining Cost: {}".format(train_cost))
-                print("\tTraining Accuracy: {}".format(train_acc))
-                print("\tValidation Cost: {}".format(valid_cost))
-                print("\tValidation Accuracy: {}".format(valid_acc))
+        # Train the neural network for the specified number of iterations.
+        # After every 100 iterations, and at the 0th iteration and the last
+        # iteration, print the training and validation cost and accuracy.
+        for i in range(iterations + 1):
+            cost_train, acc_train = sess.run(
+                [loss, accuracy], feed_dict={x: X_train, y: Y_train})
+            cost_valid, acc_valid = sess.run(
+                [loss, accuracy], feed_dict={x: X_valid, y: Y_valid})
+            if i % 100 == 0 or i == 0 or i == iterations:
+                print("After {} iterations:".format(i))
+                print("\tTraining Cost: {}".format(cost_train))
+                print("\tTraining Accuracy: {}".format(acc_train))
+                print("\tValidation Cost: {}".format(cost_valid))
+                print("\tValidation Accuracy: {}".format(acc_valid))
 
-        # Save the model
+            if i < iterations:
+                sess.run(train_op, feed_dict={x: X_train, y: Y_train})
+
+        # Save the trained model to the specified path
+        # using a TensorFlow Saver object.
         saver = tf.train.Saver()
         save_path = saver.save(sess, save_path)
-        print("Model saved in file: %s" % save_path)
-
+    # Return the path where the model was saved.
     return save_path
