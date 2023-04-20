@@ -13,7 +13,7 @@ def evaluate(X, Y, save_path):
     """
     with tf.Session() as sess:
         # Load the saved graph and restore the variables
-        saver = tf.train.import_meta_graph(save_path + '.meta')
+        saver = tf.train.import_meta_graph(save_path)
         saver.restore(sess, save_path)
 
         # Get the required tensors from the graph's collection
