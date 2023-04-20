@@ -11,18 +11,19 @@ def evaluate(X, Y, save_path):
     """
         Evaluates the output of a neural network
     """
-    with tf.Session() as sess:
-        # Load the saved model
+    graph = tf.Graph()
+    with graph.as_default():
         saver = tf.train.import_meta_graph(save_path + '.meta')
+
+    # Get the tensors we need from the graph's collection
+    with tf.Session(graph=graph) as sess:
         saver.restore(sess, save_path)
+        y_pred = graph.get_collection('y_pred')[0]
+        loss = graph.get_collection('loss')[0]
+        accuracy = graph.get_collection('accuracy')[0]
 
-        # Get tensors from the graph's collection
-        y_pred = tf.get_collection('y_pred')[0]
-        loss = tf.get_collection('loss')[0]
-        accuracy = tf.get_collection('accuracy')[0]
-
-        # Evaluate the model
+        # Evaluate the model on the input data
         feed_dict = {'X:0': X, 'Y:0': Y}
-        y_pred_val, loss_val, acc_val = sess.run([y_pred, loss, accuracy], feed_dict=feed_dict)
+        y_pred_val, loss_val, accuracy_val = sess.run([y_pred, loss, accuracy], feed_dict=feed_dict)
 
-    return y_pred_val, acc_val, loss_val
+    return y_pred_val, accuracy_val, loss_val
