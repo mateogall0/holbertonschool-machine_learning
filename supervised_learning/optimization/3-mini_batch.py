@@ -17,7 +17,6 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
         Ttrains a loaded neural network model
         using mini-batch gradient descent
     """
-    print(batch_size)
     # Load the model graph and restore the session
     saver = tf.train.import_meta_graph(load_path + '.meta')
     x = tf.get_collection('x')[0]
@@ -44,9 +43,8 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
             print("After {} epochs:".format(epoch))
             print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(train_cost, train_accuracy))
             print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(valid_cost, valid_accuracy))
-            print(X_train.shape[0])
             # Loop over batches
-            for i in range(0, X_train.shape[0], batch_size):
+            for i in range(0, 100, batch_size):
                 # Get the next batch of data
                 X_batch = X_train[i:i+batch_size]
                 Y_batch = Y_train[i:i+batch_size]
