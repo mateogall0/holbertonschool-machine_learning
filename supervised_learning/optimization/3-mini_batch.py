@@ -44,7 +44,7 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
             print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(train_cost, train_accuracy))
             print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(valid_cost, valid_accuracy))
             # Loop over batches
-            for i in range(0, 100):
+            for i in range(0, 101):
                 # Get the next batch of data
                 X_batch = X_train[i:i+batch_size]
                 Y_batch = Y_train[i:i+batch_size]
