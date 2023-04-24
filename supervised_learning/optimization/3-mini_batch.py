@@ -50,12 +50,12 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
                 # Get the next batch of data
                 X_batch = X_train[i:i+batch_size]
                 Y_batch = Y_train[i:i+batch_size]
-                
+
                 # Train the model on the current batch
                 _, step_cost, step_accuracy = sess.run([train_op, loss, accuracy], feed_dict={x: X_batch, y: Y_batch})
                 
                 # Print training progress every 100 steps
-                if i != 0 and i % 100 == 0:
+                if i != 0 and i < 100 * batch_size:
                     print("\tStep {}:\n\t\tCost: {}\n\t\tAccuracy: {}".format(i, step_cost, step_accuracy))
 
         # Save the trained model
