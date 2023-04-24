@@ -17,7 +17,7 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
         Ttrains a loaded neural network model
         using mini-batch gradient descent
     """
-
+    print(str(batch_size))
     # Load the model graph and restore the session
     saver = tf.train.import_meta_graph(load_path + '.meta')
     x = tf.get_collection('x')[0]
