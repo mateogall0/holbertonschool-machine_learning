@@ -20,13 +20,13 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
 
     # Load the model graph and restore the session
     saver = tf.train.import_meta_graph(load_path + '.meta')
-    x = tf.compat.v1.get_collection('x')[0]
-    y = tf.compat.v1.get_collection('y')[0]
-    accuracy = tf.compat.v1.get_collection('accuracy')[0]
-    loss = tf.compat.v1.get_collection('loss')[0]
-    train_op = tf.compat.v1.get_collection('train_op')[0]
+    x = tf.get_collection('x')[0]
+    y = tf.get_collection('y')[0]
+    accuracy = tf.get_collection('accuracy')[0]
+    loss = tf.get_collection('loss')[0]
+    train_op = tf.get_collection('train_op')[0]
     
-    with tf.compat.v1.Session() as sess:
+    with tf.Session() as sess:
         # Restore the trained model
         saver.restore(sess, load_path)
         
