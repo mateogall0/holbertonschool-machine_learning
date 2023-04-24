@@ -17,10 +17,9 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
         Ttrains a loaded neural network model
         using mini-batch gradient descent
     """
-    tf.compat.v1.disable_eager_execution()
 
     # Load the model graph and restore the session
-    saver = tf.compat.v1.train.import_meta_graph(load_path + '.meta')
+    saver = tf.train.import_meta_graph(load_path + '.meta')
     x = tf.compat.v1.get_collection('x')[0]
     y = tf.compat.v1.get_collection('y')[0]
     accuracy = tf.compat.v1.get_collection('accuracy')[0]
