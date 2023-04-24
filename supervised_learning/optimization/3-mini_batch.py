@@ -54,8 +54,8 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
             
             # Print progress after each epoch
             print("After {} epochs:".format(epoch+1))
-            print("\tTraining Cost = {}\n\tTraining Accuracy = {}".format(train_cost, train_accuracy))
-            print("\tValidation Cost = {}\n\tValidation Accuracy = {}".format(valid_cost, valid_accuracy))
+            print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(train_cost, train_accuracy))
+            print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(valid_cost, valid_accuracy))
 
         # Save the trained model
         save_path = saver.save(sess, save_path)
