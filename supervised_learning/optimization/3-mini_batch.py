@@ -28,6 +28,9 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
     with tf.Session() as sess:
         # Restore the trained model
         saver.restore(sess, load_path)
+
+        # Shuffle the training data
+        X_train, Y_train = shuffle_data(X_train, Y_train)
         # Calculate training and validation cost and accuracy after each epoch
         train_cost, train_accuracy = sess.run([loss, accuracy], feed_dict={x: X_train, y: Y_train})
         valid_cost, valid_accuracy = sess.run([loss, accuracy], feed_dict={x: X_valid, y: Y_valid})
