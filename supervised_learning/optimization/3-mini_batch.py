@@ -29,8 +29,6 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
         # Restore the trained model
         saver.restore(sess, load_path)
 
-        # Shuffle the training data
-        X_train, Y_train = shuffle_data(X_train, Y_train)
         # Calculate training and validation cost and accuracy after each epoch
         train_cost, train_accuracy = sess.run([loss, accuracy], feed_dict={x: X_train, y: Y_train})
         valid_cost, valid_accuracy = sess.run([loss, accuracy], feed_dict={x: X_valid, y: Y_valid})
@@ -45,14 +43,6 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
             # Shuffle the training data
             X_train, Y_train = shuffle_data(X_train, Y_train)
             
-            # Calculate training and validation cost and accuracy after each epoch
-            train_cost, train_accuracy = sess.run([loss, accuracy], feed_dict={x: X_train, y: Y_train})
-            valid_cost, valid_accuracy = sess.run([loss, accuracy], feed_dict={x: X_valid, y: Y_valid})
-            
-            # Print progress after each epoch
-            print("After {} epochs:".format(epoch))
-            print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(train_cost, train_accuracy))
-            print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(valid_cost, valid_accuracy))
             # Loop over batches
             for i in range(0, batch_size * 10):
                 # Get the next batch of data
@@ -65,6 +55,14 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
                 # Print training progress every 100 steps
                 if i != 0 and i % 100 == 0:
                     print("\tStep {}:\n\t\tCost: {}\n\t\tAccuracy: {}".format(i, step_cost, step_accuracy))
+            # Calculate training and validation cost and accuracy after each epoch
+            train_cost, train_accuracy = sess.run([loss, accuracy], feed_dict={x: X_train, y: Y_train})
+            valid_cost, valid_accuracy = sess.run([loss, accuracy], feed_dict={x: X_valid, y: Y_valid})
+            
+            # Print progress after each epoch
+            print("After {} epochs:".format(epoch))
+            print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(train_cost, train_accuracy))
+            print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(valid_cost, valid_accuracy))
 
         # Save the trained model
         save_path = saver.save(sess, save_path)
