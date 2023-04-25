@@ -31,8 +31,8 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
 
         # Print progress after each epoch
         print("After 0 epochs:")
-        print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(train_op, 1))
-        print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(train_op, 1))
+        print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(tf.get_collection('accuracy'), 1))
+        print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(1, 1))
 
 
         # Loop over epochs
