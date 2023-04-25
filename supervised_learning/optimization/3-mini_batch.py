@@ -28,7 +28,14 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
     with tf.Session() as sess:
         # Restore the trained model
         saver.restore(sess, load_path)
+        # Calculate training and validation cost and accuracy after each epoch
+        train_cost, train_accuracy = sess.run([loss, accuracy], feed_dict={x: X_train, y: Y_train})
+        valid_cost, valid_accuracy = sess.run([loss, accuracy], feed_dict={x: X_valid, y: Y_valid})
         
+        # Print progress after each epoch
+        print("After {} epochs:".format(epoch))
+        print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(train_cost, train_accuracy))
+        print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(valid_cost, valid_accuracy))
         # Loop over epochs
         for epoch in range(epochs + 1):
             
