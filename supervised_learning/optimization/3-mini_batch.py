@@ -8,7 +8,6 @@ import tensorflow as tf
 shuffle_data = __import__('2-shuffle_data').shuffle_data
 
 
-
 def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
                      batch_size=32, epochs=5,
                      load_path="/tmp/model.ckpt",
@@ -17,16 +16,17 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
         Ttrains a loaded neural network model
         using mini-batch gradient descent
     """
-    # Load the model graph and restore the session
-    saver = tf.train.import_meta_graph(load_path + '.meta')
-    x = tf.get_collection('x')[0]
-    y = tf.get_collection('y')[0]
-    accuracy = tf.get_collection('accuracy')[0]
-    loss = tf.get_collection('loss')[0]
-    train_op = tf.get_collection('train_op')[0]
-
     # Start a TensorFlow session to run the training operations
     with tf.Session() as sess:
+        # Load the model graph and restore the session
+        saver = tf.train.import_meta_graph(load_path + ".meta")
+        saver.restore(sess, load_path)
+
+        x = tf.get_collection("x")[0]
+        y = tf.get_collection("y")[0]
+        accuracy = tf.get_collection("accuracy")[0]
+        loss = tf.get_collection("loss")[0]
+        train_op = tf.get_collection("train_op")[0]
         m = X_train.shape[0]
 
         # Calculate the number of batches
@@ -39,11 +39,13 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
         for i in range(epochs + 1):
             # Calculate the loss and acuracy for the training set
             cost_train = sess.run(loss, feed_dict={x: X_train, y: Y_train})
-            accuracy_train = sess.run(accuracy, feed_dict={x: X_train, y: Y_train})
+            accuracy_train = sess.run(accuracy,
+                                      feed_dict={x: X_train, y: Y_train})
             cost_val = sess.run(loss, feed_dict={x: X_valid, y: Y_valid})
 
             # Calculate the loss and accuracy for the validation set
-            accuracy_val = sess.run(accuracy, feed_dict={x: X_valid, y: Y_valid})
+            accuracy_val = sess.run(accuracy,
+                                    feed_dict={x: X_valid, y: Y_valid})
             # Print the training and validation results for the current epoch
             print("After {} epochs:".format(i))
             print("\tTraining Cost: {}".format(cost_train))
