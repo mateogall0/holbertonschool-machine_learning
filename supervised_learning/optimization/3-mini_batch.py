@@ -24,45 +24,60 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
     accuracy = tf.get_collection('accuracy')[0]
     loss = tf.get_collection('loss')[0]
     train_op = tf.get_collection('train_op')[0]
-    
+
+    # Start a TensorFlow session to run the training operations
     with tf.Session() as sess:
-        # Restore the trained model
-        saver.restore(sess, load_path)
+        m = X_train.shape[0]
 
-        # Print progress after each epoch
-        print("After 0 epochs:")
-        print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(tf.get_collection('accuracy')[0:], 1))
-        print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(1, 1))
+        # Calculate the number of batches
+        if m % batch_size == 0:
+            n_batches = m // batch_size
+        else:
+            n_batches = m // batch_size + 1
 
+        # Train the model for the given number of epochs
+        for i in range(epochs + 1):
+            # Calculate the loss and acuracy for the training set
+            cost_train = sess.run(loss, feed_dict={x: X_train, y: Y_train})
+            accuracy_train = sess.run(accuracy, feed_dict={x: X_train, y: Y_train})
+            cost_val = sess.run(loss, feed_dict={x: X_valid, y: Y_valid})
 
-        # Loop over epochs
-        for epoch in range(1, epochs + 1):
-            
-            # Shuffle the training data
-            X_train, Y_train = shuffle_data(X_train, Y_train)
-            
-            # Loop over batches
-            for i in range(0, batch_size * 10):
-                # Get the next batch of data
-                X_batch = X_train[i:i+batch_size]
-                Y_batch = Y_train[i:i+batch_size]
+            # Calculate the loss and accuracy for the validation set
+            accuracy_val = sess.run(accuracy, feed_dict={x: X_valid, y: Y_valid})
+            # Print the training and validation results for the current epoch
+            print("After {} epochs:".format(i))
+            print("\tTraining Cost: {}".format(cost_train))
+            print("\tTraining Accuracy: {}".format(accuracy_train))
+            print("\tValidation Cost: {}".format(cost_val))
+            print("\tValidation Accuracy: {}".format(accuracy_val))
 
-                # Train the model on the current batch
-                _, step_cost, step_accuracy = sess.run([train_op, loss, accuracy], feed_dict={x: X_batch, y: Y_batch})
-                
-                # Print training progress every 100 steps
-                if i != 0 and i % 100 == 0:
-                    print("\tStep {}:\n\t\tCost: {}\n\t\tAccuracy: {}".format(i, step_cost, step_accuracy))
-            # Calculate training and validation cost and accuracy after each epoch
-            train_cost, train_accuracy = sess.run([loss, accuracy], feed_dict={x: X_train, y: Y_train})
-            valid_cost, valid_accuracy = sess.run([loss, accuracy], feed_dict={x: X_valid, y: Y_valid})
-            
-            # Print progress after each epoch
-            print("After {} epochs:".format(epoch))
-            print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(train_cost, train_accuracy))
-            print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(valid_cost, valid_accuracy))
+            # Train the model using mini-batches
+            if i < epochs:
+                # Shuffle the training data
+                shuffled_X, shuffled_Y = shuffle_data(X_train, Y_train)
 
+                # Train the model using mini-batches
+                for b in range(n_batches):
+                    start = b * batch_size
+                    end = (b + 1) * batch_size
+                    if end > m:
+                        end = m
+                    X_mini_batch = shuffled_X[start:end]
+                    Y_mini_batch = shuffled_Y[start:end]
+
+                    # Define the next mini-batch
+                    next_train = {x: X_mini_batch, y: Y_mini_batch}
+
+                    # Run a training step with the mini-batch
+                    sess.run(train_op, feed_dict=next_train)
+
+                    # Print the mini-batch results every 100 batches
+                    if (b + 1) % 100 == 0 and b != 0:
+                        loss_mini_batch = sess.run(loss, feed_dict=next_train)
+                        acc_mini_batch = sess.run(accuracy,
+                                                  feed_dict=next_train)
+                        print("\tStep {}:".format(b + 1))
+                        print("\t\tCost: {}".format(loss_mini_batch))
+                        print("\t\tAccuracy: {}".format(acc_mini_batch))
         # Save the trained model
-        save_path = saver.save(sess, save_path)
-        
-    return save_path
+        return saver.save(sess, save_path)
