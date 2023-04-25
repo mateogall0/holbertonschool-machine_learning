@@ -36,11 +36,11 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
         valid_cost, valid_accuracy = sess.run([loss, accuracy], feed_dict={x: X_valid, y: Y_valid})
         
         # Print progress after each epoch
-        print("After {} epochs:".format(epoch))
+        print("After 0 epochs:")
         print("\tTraining Cost: {}\n\tTraining Accuracy: {}".format(train_cost, train_accuracy))
         print("\tValidation Cost: {}\n\tValidation Accuracy: {}".format(valid_cost, valid_accuracy))
         # Loop over epochs
-        for epoch in range(epochs + 1):
+        for epoch in range(1, epochs + 1):
             
             # Shuffle the training data
             X_train, Y_train = shuffle_data(X_train, Y_train)
