@@ -4,9 +4,6 @@
 """
 
 
-import numpy as np
-
-
 def update_variables_momentum(alpha, beta1, var, grad, v):
     """
         Updates a variable using the gradient
@@ -21,7 +18,5 @@ def update_variables_momentum(alpha, beta1, var, grad, v):
         var = var - alpha * v
         Here, var represents the weights at time step t.
     """
-    return (
-        var - alpha * v,
-        beta1 * v + (1 - beta1) * grad
-    )
+    dW = beta1 * v + (1 - beta1) * grad
+    return var - dW * alpha, dW
