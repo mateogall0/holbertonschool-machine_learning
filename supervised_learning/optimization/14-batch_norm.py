@@ -17,19 +17,18 @@ def create_batch_norm_layer(prev, n, activation):
         activation -- activation function that should
         be used on the output of the layer
     """
-    # create a dense layer
+    # Using tf.layers.Dense as the base layer with variance_scaling_initializer
     layer = tf.layers.Dense(units=n, kernel_initializer=tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG"))
-    
-    # apply batch normalization to the dense layer
-    layer = tf.layers.BatchNormalization()(layer(prev))
-    
-    # add trainable parameters gamma and beta
-    gamma = tf.Variable(tf.ones([n]))
-    beta = tf.Variable(tf.zeros([n]))
-    layer = gamma * layer + beta
-    
-    # apply activation function
-    if activation is not None:
-        layer = activation(layer)
-    
-    return layer
+
+    # Creating gamma and beta trainable parameters initialized as vectors of 1 and 0 respectively
+    gamma = tf.Variable(initial_value=tf.constant(1.0, shape=[n]), name='gamma')
+    beta = tf.Variable(initial_value=tf.constant(0.0, shape=[n]), name='beta')
+
+    # Calculating the mean and variance of the layer inputs
+    mean, variance = tf.nn.moments(prev, axes=[0])
+
+    # Creating the batch normalization layer
+    batch_norm = tf.nn.batch_normalization(prev, mean, variance, beta, gamma, epsilon=1e-8)
+
+    # Applying activation function to the output of batch normalization layer
+    return activation(batch_norm)
