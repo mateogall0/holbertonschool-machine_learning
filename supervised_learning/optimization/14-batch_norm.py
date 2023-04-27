@@ -21,8 +21,8 @@ def create_batch_norm_layer(prev, n, activation):
     layer = tf.layers.Dense(units=n, kernel_initializer=tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG"))
 
     # Creating gamma and beta trainable parameters initialized as vectors of 1 and 0 respectively
-    gamma = tf.Variable(initial_value=tf.constant(1.0, shape=[n]), name='gamma')
-    beta = tf.Variable(initial_value=tf.constant(0.0, shape=[n]), name='beta')
+    gamma = tf.Variable(initial_value=tf.ones([n]), name='gamma')
+    beta = tf.Variable(initial_value=tf.zeros([n]), name='beta')
 
     # Calculating the mean and variance of the layer inputs
     mean, variance = tf.nn.moments(prev, axes=[0])
