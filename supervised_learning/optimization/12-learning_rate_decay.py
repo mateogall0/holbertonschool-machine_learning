@@ -19,13 +19,4 @@ def learning_rate_decay(alpha, decay_rate, global_step, decay_step):
         decay_step -- number of passes of gradient descent that
         should occur before alpha is decayed further
     """
-    # Define learning rate decay function
-    learning_rate = tf.train.exponential_decay(initial_learning_rate,
-                                               global_step,
-                                               decay_steps,
-                                               decay_rate,
-                                               staircase=True)
-
-    # Define optimizer and training operation
-    optimizer = tf.train.AdamOptimizer(learning_rate)
-    return optimizer.minimize(loss, global_step=global_step)
+    return tf.train.inverse_time_decay(alpha, global_step, decay_step, decay_rate)
