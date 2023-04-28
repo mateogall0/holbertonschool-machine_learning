@@ -5,6 +5,7 @@
 
 
 import tensorflow as tf
+import numpy as np
 
 
 def model(Data_train, Data_valid, layers, activations,
