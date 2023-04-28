@@ -115,11 +115,11 @@ def model(Data_train, Data_valid, layers, activations,
                 # Compute cost and accuracy on entire validation set
                 valid_cost, valid_accuracy = sess.run([cost, accuracy], feed_dict={X: X_valid, y: y_valid})
                 
-                print(f"After {epoch+1} epochs:")
-                print(f"\tTraining Cost: {train_cost}")
-                print(f"\tTraining Accuracy: {train_accuracy}")
-                print(f"\tValidation Cost: {valid_cost}")
-                print(f"\tValidation Accuracy: {valid_accuracy}")
+                print("After {epoch+1} epochs:")
+                print("\tTraining Cost: {}".format(train_cost))
+                print("\tTraining Accuracy: {}".format(train_accuracy))
+                print("\tValidation Cost: {}".format(valid_cost))
+                print("\tValidation Accuracy: {}".format(valid_accuracy))
                 
                 # Save model after every epoch
                 saver.save(sess, save_path)
