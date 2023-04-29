@@ -229,81 +229,95 @@ def model(Data_train, Data_valid, layers, activations,
         pass through the whole dataset
         save_path -- path where the model should be saved to
     """
+    # extract some useful information from the training data,
+    # such as the number of features (nx) and number of
+    # classes (cls). It then assigns the training and
+    # validation data to separate variables for ease of use
     nx = Data_train[0].shape[1]
-    classes = Data_train[1].shape[1]
-
+    cls = Data_train[1].shape[1]
     X_train, Y_train = Data_train
     X_valid, Y_valid = Data_valid
 
-    x = tf.placeholder(tf.float32, shape=[None, nx], name='x')
-    y = tf.placeholder(tf.float32, shape=[None, classes], name='y')
-
-    tf.add_to_collection('x', x)
-    tf.add_to_collection('y', y)
-
+    # define the input placeholders (x, y) for the neural
+    # network, and pass them through the forward propagation
+    # step to get the predicted output (y_pred). It then
+    # calculates the accuracy and loss for the model using the
+    # true labels (y) and predicted output (y_pred)
+    x, y = create_placeholders(nx, cls)
+    tf.add_to_collection("x", x)
+    tf.add_to_collection("y", y)
     y_pred = forward_prop(x, layers, activations)
-    tf.add_to_collection('y_pred', y_pred)
-
-    loss = calculate_loss(y, y_pred)
-    tf.add_to_collection('loss', loss)
-
+    tf.add_to_collection("y_pred", y_pred)
     accuracy = calculate_accuracy(y, y_pred)
-    tf.add_to_collection('accuracy', accuracy)
+    tf.add_to_collection("accuracy", accuracy)
+    loss = calculate_loss(y, y_pred)
+    tf.add_to_collection("loss", loss)
 
+    # define some additional variables, such as the global step
+    # counter, the learning rate decay, and the training
+    # operation that uses the Adam optimizer. It then
+    # initializes all the variables, and sets up a saver object
+    # to save the trained model
     global_step = tf.Variable(0)
-    alpha_op = learning_rate_decay(alpha, decay_rate, global_step, 1)
-    train_op = create_Adam_op(loss, alpha_op, beta1, beta2, epsilon)
-    tf.add_to_collection('train_op', train_op)
-
+    alpha_d = learning_rate_decay(alpha, decay_rate, global_step, 1)
+    train_op = create_Adam_op(loss, alpha_d, beta1, beta2, epsilon)
+    tf.add_to_collection("train_op", train_op)
     init = tf.global_variables_initializer()
     saver = tf.train.Saver()
 
+    # starts a TensorFlow session and initializes all the variables.
+    # It then calculates the number of mini-batches needed for the
+    # training data based on the batch size
     with tf.Session() as sess:
         sess.run(init)
         m = X_train.shape[0]
-        if (m % batch_size) == 0:
-            num_minibatches = int(m / batch_size)
-            check = 1
+        # mini batch definition
+        if m % batch_size == 0:
+            n_batches = m // batch_size
         else:
-            num_minibatches = int(m / batch_size) + 1
-            check = 0
+            n_batches = m // batch_size + 1
 
-        for epoch in range(epochs + 1):
-            feed_train = {x: X_train, y: Y_train}
-            feed_valid = {x: X_valid, y: Y_valid}
-            train_cost = sess.run(loss, feed_dict=feed_train)
-            train_accuracy = sess.run(accuracy, feed_dict=feed_train)
-            valid_cost = sess.run(loss, feed_dict=feed_valid)
-            valid_accuracy = sess.run(accuracy, feed_dict=feed_valid)
+        # training loop
+        for i in range(epochs + 1):
+            cost_train = sess.run(loss, feed_dict={x: X_train, y: Y_train})
+            accuracy_train = sess.run(accuracy,
+                                      feed_dict={x: X_train, y: Y_train})
+            cost_val = sess.run(loss, feed_dict={x: X_valid, y: Y_valid})
+            accuracy_val = sess.run(accuracy,
+                                    feed_dict={x: X_valid, y: Y_valid})
+            print("After {} epochs:".format(i))
+            print("\tTraining Cost: {}".format(cost_train))
+            print("\tTraining Accuracy: {}".format(accuracy_train))
+            print("\tValidation Cost: {}".format(cost_val))
+            print("\tValidation Accuracy: {}".format(accuracy_val))
 
-            print("After {} epochs:".format(epoch))
-            print("\tTraining Cost: {}".format(train_cost))
-            print("\tTraining Accuracy: {}".format(train_accuracy))
-            print("\tValidation Cost: {}".format(valid_cost))
-            print("\tValidation Accuracy: {}".format(valid_accuracy))
+            # loop runs the training operation for a specified number of
+            # epochs, and prints out the training and validation cost
+            # and accuracy for each epoch
+            if i < epochs:
+                shuffled_X, shuffled_Y = shuffle_data(X_train, Y_train)
 
-            if epoch < epochs:
-                Xs, Ys = shuffle_data(X_train, Y_train)
+                # mini batches
+                for b in range(n_batches):
+                    start = b * batch_size
+                    end = (b + 1) * batch_size
+                    if end > m:
+                        end = m
+                    X_mini_batch = shuffled_X[start:end]
+                    Y_mini_batch = shuffled_Y[start:end]
 
-                for step_number in range(num_minibatches):
-                    start = step_number * batch_size
-                    end = (step_number + 1) * batch_size
-                    if check == 0 and step_number == num_minibatches - 1:
-                        x_minbatch = Xs[start::]
-                        y_minbatch = Ys[start::]
-                    else:
-                        x_minbatch = Xs[start:end]
-                        y_minbatch = Ys[start:end]
+                    next_train = {x: X_mini_batch, y: Y_mini_batch}
+                    sess.run(train_op, feed_dict=next_train)
 
-                    feed_mini = {x: x_minbatch, y: y_minbatch}
-                    sess.run(train_op, feed_dict=feed_mini)
+                    if (b + 1) % 100 == 0 and b != 0:
+                        loss_mini_batch = sess.run(loss, feed_dict=next_train)
+                        acc_mini_batch = sess.run(accuracy,
+                                                  feed_dict=next_train)
+                        print("\tStep {}:".format(b + 1))
+                        print("\t\tCost: {}".format(loss_mini_batch))
+                        print("\t\tAccuracy: {}".format(acc_mini_batch))
 
-                    if ((step_number + 1) % 100 == 0) and (step_number != 0):
-                        step_cost = sess.run(loss, feed_dict=feed_mini)
-                        step_accuracy = sess.run(accuracy, feed_dict=feed_mini)
-                        print("\tStep {}:".format(step_number + 1))
-                        print("\t\tCost: {}".format(step_cost))
-                        print("\t\tAccuracy: {}".format(step_accuracy))
+            # Update of global step variable for each iteration
             sess.run(tf.assign(global_step, global_step + 1))
-            save_path = saver.save(sess, save_path)
-    return save_path
+
+        return saver.save(sess, save_path)
