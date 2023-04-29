@@ -180,6 +180,21 @@ def calculate_loss(y, y_pred):
     return tf.losses.softmax_cross_entropy(onehot_labels=y, logits=y_pred)
 
 
+def calculate_accuracy(y, y_pred):
+    """
+        Calculates the accuracy of a prediction
+    """
+    # Convert one-hot encoded y to class labels
+    y_true = tf.argmax(y, axis=1)
+    # Convert one-hot encoded y_pred to class labels
+    y_pred = tf.argmax(y_pred, axis=1)
+    # Calculate the number of correct predictions
+    correct_predictions = tf.equal(y_true, y_pred)
+    # Calculate the accuracy
+    accuracy = tf.reduce_mean(tf.cast(correct_predictions, tf.float32))
+    return accuracy
+
+
 def model(Data_train, Data_valid, layers, activations,
           alpha=0.001, beta1=0.9, beta2=0.999,
           epsilon=1e-8, decay_rate=1, batch_size=32,
