@@ -229,11 +229,20 @@ def model(Data_train, Data_valid, layers, activations,
         pass through the whole dataset
         save_path -- path where the model should be saved to
     """
+    #extract some useful information from the training data,
+    # such as the number of features (nx) and number of
+    # classes (cls). It then assigns the training and
+    # validation data to separate variables for ease of use
     nx = Data_train[0].shape[1]
     cls = Data_train[1].shape[1]
     X_train, Y_train = Data_train
     X_valid, Y_valid = Data_valid
 
+    #define the input placeholders (x, y) for the neural
+    # network, and pass them through the forward propagation
+    # step to get the predicted output (y_pred). It then
+    # calculates the accuracy and loss for the model using the
+    # true labels (y) and predicted output (y_pred)
     x, y = create_placeholders(nx, cls)
     tf.add_to_collection("x", x)
     tf.add_to_collection("y", y)
@@ -244,6 +253,11 @@ def model(Data_train, Data_valid, layers, activations,
     loss = calculate_loss(y, y_pred)
     tf.add_to_collection("loss", loss)
 
+    #define some additional variables, such as the global step
+    # counter, the learning rate decay, and the training
+    # operation that uses the Adam optimizer. It then
+    # initializes all the variables, and sets up a saver object
+    # to save the trained model
     global_step = tf.Variable(0)
     alpha_d = learning_rate_decay(alpha, decay_rate, global_step, 1)
     train_op = create_Adam_op(loss, alpha_d, beta1, beta2, epsilon)
@@ -251,6 +265,9 @@ def model(Data_train, Data_valid, layers, activations,
     init = tf.global_variables_initializer()
     saver = tf.train.Saver()
 
+    #starts a TensorFlow session and initializes all the variables.
+    # It then calculates the number of mini-batches needed for the
+    # training data based on the batch size
     with tf.Session() as sess:
         sess.run(init)
         m = X_train.shape[0]
@@ -274,6 +291,9 @@ def model(Data_train, Data_valid, layers, activations,
             print("\tValidation Cost: {}".format(cost_val))
             print("\tValidation Accuracy: {}".format(accuracy_val))
 
+            #loop runs the training operation for a specified number of
+            # epochs, and prints out the training and validation cost
+            # and accuracy for each epoch
             if i < epochs:
                 shuffled_X, shuffled_Y = shuffle_data(X_train, Y_train)
 
