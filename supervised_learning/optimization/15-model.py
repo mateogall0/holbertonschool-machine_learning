@@ -42,86 +42,116 @@ def model(Data_train, Data_valid, layers, activations,
         pass through the whole dataset
         save_path -- path where the model should be saved to
     """
-    X_train, y_train = Data_train
-    X_valid, y_valid = Data_valid
-    input_shape = X_train.shape[1:]
-    num_classes = y_train.shape[1]
+    pass
 
-    # Build model
-    X = tf.placeholder(tf.float32, shape=(None, *input_shape), name='X')
-    y = tf.placeholder(tf.float32, shape=(None, num_classes), name='y')
-    is_training = tf.placeholder(tf.bool, name='is_training')
+def create_momentum_op(loss, alpha, beta1):
+    """
+        Creates the training operation for a neural
+        network in tensorflow using the gradient
+        descent with momentum optimization algorithm
 
-    x = X
-    for layer, activation in zip(layers, activations):
-        x = tf.layers.dense(x, layer, activation=None)
-        x = tf.layers.batch_normalization(x, training=is_training)
-        x = activation(x)
+        loss -- the loss of the network
+        alpha -- the learning rate
+        beta1 -- the momentum weight
+    """
+    optimizer = tf.train.MomentumOptimizer(learning_rate=alpha, momentum=beta1)
+    train_op = optimizer.minimize(loss)
+    return train_op
 
-    logits = tf.layers.dense(x, num_classes, activation=None)
-    y_proba = tf.nn.softmax(logits, name='y_proba')
+def create_RMSProp_op(loss, alpha, beta2, epsilon):
+    """
+        Creates the training operation for a neural
+        network in tensorflow using the
+        RMSProp optimization algorithm
 
-    # Define loss and optimizer
-    with tf.name_scope('loss'):
-        xentropy = tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=logits)
-        cost = tf.reduce_mean(xentropy, name='cost')
-    with tf.name_scope('train'):
-        global_step = tf.Variable(0, trainable=False, name='global_step')
-        decay_steps = X_train.shape[0] // batch_size
-        learning_rate = tf.train.inverse_time_decay(alpha, global_step, decay_steps, decay_rate)
-        optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, beta1=beta1, beta2=beta2, epsilon=epsilon)
-        train_op = optimizer.minimize(cost, global_step=global_step)
+        loss -- the loss of the network
+        alpha -- learning rate
+        beta2 -- RMSProp weight
+        epsilon -- small number to avoid division by zero
+    """
+    optimizer = tf.train.RMSPropOptimizer(learning_rate=alpha,
+                                          decay=beta2,
+                                          epsilon=epsilon)
+    return optimizer.minimize(loss)
 
-    # Define accuracy
-    with tf.name_scope('accuracy'):
-        correct = tf.equal(tf.argmax(y_proba, axis=1), tf.argmax(y, axis=1))
-        accuracy = tf.reduce_mean(tf.cast(correct, tf.float32), name='accuracy')
+def create_Adam_op(loss, alpha, beta1, beta2, epsilon):
+    """
+        Creates the training operation for a
+        neural network in tensorflow using the
+        Adam optimization algorithm
 
-    # Initialize variables and start session
-    init = tf.global_variables_initializer()
-    saver = tf.train.Saver()
-    with tf.Session() as sess:
-        init.run()
+        loss -- loss of the network
+        alpha -- learning rate
+        beta1 -- weight used for the first moment
+        beta2 -- weight used for the second moment
+        epsilon -- small number to avoid division by zero
+    """
+    # Create Adam optimizer
+    optimizer = tf.train.AdamOptimizer(learning_rate=alpha,
+                                       beta1=beta1,
+                                       beta2=beta2,
+                                       epsilon=epsilon)
+    return optimizer.minimize(loss)
 
-        # Train model
-        for epoch in range(1, epochs+1):
-            print("Epoch {}:".format(epoch))
-            total_step_cost = 0
-            total_step_accuracy = 0
+def learning_rate_decay(alpha, decay_rate, global_step, decay_step):
+    """
+        Creates a learning rate decay operation in tensorflow
+        using inverse time decay
 
-            # Shuffle data
-            shuffled_indices = np.random.permutation(X_train.shape[0])
-            X_train_shuffled = X_train[shuffled_indices]
-            y_train_shuffled = y_train[shuffled_indices]
+        alpha -- original learning rate
+        decay_rate -- weight used to determine the rate at which alpha will
+        decay
+        global_step -- number of passes of gradient descent that have elapsed
+        decay_step -- number of passes of gradient descent that
+        should occur before alpha is decayed further
 
-            # Train on mini-batches
-            for batch in range(0, X_train.shape[0], batch_size):
-                batch_X = X_train_shuffled[batch:batch+batch_size]
-                batch_y = y_train_shuffled[batch:batch+batch_size]
-                _, step, step_cost, step_accuracy = sess.run([train_op, global_step, cost, accuracy], feed_dict={X: batch_X, y: batch_y, is_training: True})
-                total_step_cost += step_cost
-                total_step_accuracy += step_accuracy
 
-                # Print progress every 100 steps
-                if step % 100 == 0:
-                    avg_step_cost = total_step_cost / 100
-                    avg_step_accuracy = total_step_accuracy / 100
-                    print("\tStep {}:".format(step))
-                    print("\t\tCost: {}".format(avg_step_accuracy))
-                    print("\t\tAccuracy: {}".format(step_accuracy))
-            # Compute cost and accuracy on entire training set
-                train_cost, train_accuracy = sess.run([cost, accuracy], feed_dict={X: X_train, y: y_train})
-                
-                # Compute cost and accuracy on entire validation set
-                valid_cost, valid_accuracy = sess.run([cost, accuracy], feed_dict={X: X_valid, y: y_valid})
-                
-                print("After {epoch+1} epochs:")
-                print("\tTraining Cost: {}".format(train_cost))
-                print("\tTraining Accuracy: {}".format(train_accuracy))
-                print("\tValidation Cost: {}".format(valid_cost))
-                print("\tValidation Accuracy: {}".format(valid_accuracy))
-                
-                # Save model after every epoch
-                saver.save(sess, save_path)
-                
-        return save_path
+
+        If staircase=True, the learning rate will decay in a stepwise
+        fashion, meaning that the learning rate will be reduced by a
+        factor of decay_rate every decay_step steps. This is useful
+        when you want to apply a larger decay to the learning rate at
+        specific intervals, such as at the end of an epoch or after a
+        certain number of steps.
+
+        If staircase=False, the learning rate will decay continuously,
+        meaning that the learning rate will be decayed by a factor of
+        decay_rate for every step, which can be useful when you want a
+        more gradual and continuous decay.
+    """
+    return tf.train.inverse_time_decay(
+        alpha,
+        global_step=global_step,
+        decay_steps=decay_step,
+        decay_rate=decay_rate,
+        staircase=True
+    )
+
+def create_batch_norm_layer(prev, n, activation):
+    """
+        Creates a batch normalization layer for a
+        neural network in tensorflow
+
+        prev -- activated output of the previous layer
+        n -- number of nodes in the layer to be created
+        activation -- activation function that should
+        be used on the output of the layer
+    """
+    # Layers
+    k_init = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
+    output = tf.layers.Dense(units=n, kernel_initializer=k_init)
+    Z = output(prev)
+
+    # Gamma and Beta initialization
+    gamma = tf.Variable(initial_value=tf.constant(1.0, shape=[n]),
+                        name="gamma")
+    beta = tf.Variable(initial_value=tf.constant(0.0, shape=[n]), name="beta")
+
+    # Batch normalization
+    mean, var = tf.nn.moments(Z, axes=0)
+    b_norm = tf.nn.batch_normalization(Z, mean, var, offset=beta,
+                                       scale=gamma,
+                                       variance_epsilon=1e-8)
+    if activation is None:
+        return b_norm
+    return activation(b_norm)
