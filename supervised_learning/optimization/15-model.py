@@ -236,7 +236,7 @@ def model(Data_train, Data_valid, layers, activations,
 
     x, y = create_placeholders(nx, cls)
     tf.add_to_collection("x", x)
-    tf.add_to_collection("", y)
+    tf.add_to_collection("y", y)
     y_pred = forward_prop(x, layers, activations)
     tf.add_to_collection("y_pred", y_pred)
     accuracy = calculate_accuracy(y, y_pred)
