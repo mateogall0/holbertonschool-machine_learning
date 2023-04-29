@@ -47,6 +47,7 @@ def model(Data_train, Data_valid, layers, activations,
     output_dim = Data_train[1].shape[1]
     X = tf.placeholder(tf.float32, [None, input_dim], name='X')
     y = tf.placeholder(tf.float32, [None, output_dim], name='y')
+    print(y)
     return X
 
 def create_momentum_op(loss, alpha, beta1):
