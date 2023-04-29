@@ -224,6 +224,8 @@ def model(Data_train, Data_valid, layers, activations,
     tf.add_to_collection("", y)
     y_pred = forward_prop(x, layers, activations)
     tf.add_to_collection("y_pred", y_pred)
+    accuracy = calculate_accuracy(y, y_pred)
+    tf.add_to_collection("accuracy", accuracy)
     loss = calculate_loss(y, y_pred)
     tf.add_to_collection("loss", loss)
 
