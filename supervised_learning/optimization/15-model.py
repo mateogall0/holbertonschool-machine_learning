@@ -232,8 +232,8 @@ def model(Data_train, Data_valid, layers, activations,
     nx = Data_train[0].shape[1]
     classes = Data_train[1].shape[1]
 
-    (X_train, Y_train) = Data_train
-    (X_valid, Y_valid) = Data_valid
+    X_train, Y_train = Data_train
+    X_valid, Y_valid = Data_valid
 
     x = tf.placeholder(tf.float32, shape=[None, nx], name='x')
     y = tf.placeholder(tf.float32, shape=[None, classes], name='y')
