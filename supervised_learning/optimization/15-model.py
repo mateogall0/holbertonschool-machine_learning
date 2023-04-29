@@ -42,7 +42,12 @@ def model(Data_train, Data_valid, layers, activations,
         pass through the whole dataset
         save_path -- path where the model should be saved to
     """
-    pass
+    # Create placeholders for input data and labels
+    input_dim = Data_train[0].shape[1]
+    output_dim = Data_train[1].shape[1]
+    X = tf.placeholder(tf.float32, [None, input_dim], name='X')
+    y = tf.placeholder(tf.float32, [None, output_dim], name='y')
+    return X, y
 
 def create_momentum_op(loss, alpha, beta1):
     """
