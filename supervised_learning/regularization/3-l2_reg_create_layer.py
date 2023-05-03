@@ -20,7 +20,7 @@ def l2_reg_create_layer(prev, n, activation, lambtha):
     # Create weight matrix for the layer with L2 regularization
     initializer = tf.contrib.layers.variance_scaling_initializer()
     regularizer = tf.contrib.layers.l2_regularizer(scale=lambtha)
-    w = tf.Variable(initializer([int(prev.shape[1]), n]), dtype=tf.float32, name="kernel", regularizer=regularizer)
+    w = tf.Variable(initializer([int(prev.shape[1]), n]), name="kernel", regularizer=regularizer)
 
     # Compute the linear transformation of the previous layer
     z = tf.matmul(prev, w)
