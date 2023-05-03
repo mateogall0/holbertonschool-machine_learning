@@ -29,7 +29,7 @@ def dropout_forward_prop(X, weights, L, keep_prob):
     cache['A0'] = X
     for l in range(1, L+1):
         W = weights['W' + str(l)]
-        b = weights['W' + str(l)]
+        b = weights['b' + str(l)]
 
         A_prev = cache['A' + str(l - 1)]
 
@@ -39,18 +39,20 @@ def dropout_forward_prop(X, weights, L, keep_prob):
         # apply the activation function, except for the last layer
         if l < L:
             A = np.tanh(Z)  # tanh
-            # matrix of random values between 0 and 1
-            D = np.random.normal(A.shape[0], A.shape[1])
-            # Binary mask D comparing values with keep_prob
-            D = D < keep_prob
-            # some of the activation values will be set to 0
-            # while others will remain unchanged
-            A *= D
-            # rescaling operation to have the same expected value
-            # as before the masking operation
+            # Generate a binary mask to drop out some nodes
+            D = np.random.rand(A.shape[0], A.shape[1])
+            D = (D < keep_prob).astype(int)
+
+            # Apply the mask to the output of the current layer
+            A = np.multiply(A, D)
+
+            # Normalize the output of the current layer
             A /= keep_prob
+
+            # Store the mask for backpropagation
             cache['D' + str(l)] = D
         else:
             A = np.exp(Z) / np.sum(np.exp(Z), axis=0, keepdims=True)  # softmax
+        cache['A' + str(l)] = A
 
     return cache
