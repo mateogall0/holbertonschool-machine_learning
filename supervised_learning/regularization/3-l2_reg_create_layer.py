@@ -17,19 +17,18 @@ def l2_reg_create_layer(prev, n, activation, lambtha):
         lambtha -- L2 regularization parameter
         Returns: the output of the new layer
     """
-    # Initialize the kernel with random values
-    kernel_initializer = tf.keras.initializers.glorot_uniform()
-
-    # Create a regularizer object using the L2 regularization parameter
-    regularizer = tf.keras.regularizers.l2(lambtha)
-
-    # Create a dense layer with the specified number of nodes and activation
-    # function
-    layer = tf.keras.layers.Dense(n, activation=activation,
-                                  kernel_initializer=kernel_initializer,
-                                  kernel_regularizer=regularizer)
-
-    # Apply the layer to the previous tensor to obtain the output tensor
-    output = layer(prev)
-
-    return output
+    # Create weight matrix for the layer with L2 regularization
+    initializer = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
+    regularizer = tf.contrib.layers.l2_regularizer(scale=lambtha)
+    w = tf.Variable(initializer([int(prev.shape[1]), n]), dtype=tf.float32, name="kernel", regularizer=regularizer)
+    
+    # Compute the linear transformation of the previous layer
+    z = tf.matmul(prev, w)
+    
+    # Apply the activation function
+    if activation is not None:
+        a = activation(z)
+    else:
+        a = z
+    
+    return a
