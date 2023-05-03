@@ -35,7 +35,8 @@ def l2_reg_create_layer(prev, n, activation, lambtha):
     # layer as n, the activation function as activation, the weight
     # initializer as init, and the weight regularizer as reg. The name
     # parameter provides a name for the layer.
-    layer = tf.layers.Dense(n, activation=activation,
+    layer = tf.layers.Dense(n,
+                            activation=activation,
                             kernel_initializer=init,
                             name="layer",
                             kernel_regularizer=reg)
