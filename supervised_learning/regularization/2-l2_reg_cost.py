@@ -16,8 +16,7 @@ def l2_reg_cost(cost):
         Returns: a tensor containing the cost of the network accounting for
         L2 regularization
     """
-    # Get all trainable variables
-    trainable_vars = tf.trainable_variables()
+    print (cost)
     
     # Calculate L2 regularization term
-    return [tf.nn.l2_loss(var) for var in trainable_vars]
+    return [tf.nn.l2_loss(var) for var in cost]
