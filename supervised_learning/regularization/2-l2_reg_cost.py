@@ -20,4 +20,4 @@ def l2_reg_cost(cost):
     trainable_vars = tf.trainable_variables()
     
     # Calculate L2 regularization term
-    return tf.add_n([tf.nn.l2_loss(var) for var in trainable_vars])    
+    return [tf.nn.l2_loss(var) for var in trainable_vars]
