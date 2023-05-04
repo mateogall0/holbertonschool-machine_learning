@@ -4,7 +4,7 @@
 """
 
 
-import tensorflow as tf
+import numpy as np
 
 
 def dropout_create_layer(prev, n, activation, keep_prob):
@@ -18,16 +18,16 @@ def dropout_create_layer(prev, n, activation, keep_prob):
         Returns: the output of the new layer
     """
     # Initialize the weights and biases of the new layer
-    W = tf.Variable(tf.random.normal([n, prev.shape[1]],
-                                     stddev=tf.sqrt(2 / prev.shape[1])))
-    b = tf.Variable(tf.zeros([n, 1]))
-
+    W = np.random.randn(n, prev.shape[0]) * np.sqrt(2 / prev.shape[0])
+    b = np.zeros((n, 1))
+    
     # Compute the linear output of the new layer
-    Z = tf.matmul(W, prev, transpose_b=True) + b
-
+    Z = np.dot(W, prev) + b
+    
     # Apply dropout to the linear output
-    D = tf.nn.dropout(tf.ones_like(Z), keep_prob=keep_prob)
-    A = tf.multiply(Z, D)
+    D = np.random.rand(Z.shape[0], Z.shape[1]) < keep_prob
+    A = np.multiply(Z, D)
+    A /= keep_prob
 
     # Apply the activation function to the output
     output = activation(A)
