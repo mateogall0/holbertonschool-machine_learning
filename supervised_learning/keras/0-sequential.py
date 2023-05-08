@@ -1,12 +1,10 @@
-#!/usr/bin/en python3
+#!/usr/bin/env python3
 """
     Sequential
 """
 
 
 import tensorflow.keras as K
-from tensorflow.keras import regularizers
-import tensorflow.keras.layers as layers
 
 
 def build_model(nx, layers, activations, lambtha, keep_prob):
@@ -26,23 +24,22 @@ def build_model(nx, layers, activations, lambtha, keep_prob):
     # Create a sequential model
     model = K.Sequential()
 
-    # Add the first hidden layer with L2 regularization
-    model.add(layers.Dense(
-        layers[0],
-        input_shape=(nx,),
-        activation=activations[0],
-        kernel_regularizer=regularizers.l2(lambtha)
-    ))
-    model.add(layers.Dropout(1 - keep_prob))
-
-    # Add the remaining hidden layers with L2 regularization and dropout
-    for i in range(1, len(layers)):
-        model.add(layers.Dense(layers[i],
-                                activation=activations[i],
-                                kernel_regularizer=regularizers.l2(lambtha)
-                                ))
-        model.add(layers.Dropout(1 - keep_prob))
-
-    # Add the output layer
-    model.add(layers.Dense(1, activation=None))
+    # Add layers to the model
+    for i in range(len(layers)):
+        if i == 0:
+            # Add the first hidden layer with input shape and L2 regularization
+            model.add(K.layers.Dense(
+                layers[i],
+                input_shape=(nx,),
+                activation=activations[i],
+                kernel_regularizer=K.regularizers.l2(lambtha)
+                ))
+        else:
+            # Add dropout layer and hidden layer with L2 regularization
+            model.add(K.layers.Dropout(1 - keep_prob))
+            model.add(K.layers.Dense(
+                layers[i],
+                activation=activations[i],
+                kernel_regularizer=K.regularizers.l2(lambtha)
+                ))
     return model
