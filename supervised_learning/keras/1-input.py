@@ -21,28 +21,22 @@ def build_model(nx, layers, activations, lambtha, keep_prob):
 
         Returns: the keras model
     """
-    # Initialize the input layer
+    K.Model()
     inputs = K.Input(shape=(nx,))
-
-    # Initialize the previous layer to be the input layer
-    prev_layer = inputs
-
-    # Iterate over the layers, adding each one to the model
-    for i in range(len(layers)):
-        # Add a dense layer with the specified number of nodes and activation
-        # function
-        dense_layer = K.layers.Dense(
+    x = K.layers.Dense(
+        layers[0],
+        activation=activations[0],
+        kernel_regularizer=K.regularizers.l2(lambtha))(inputs)
+    y = x
+    rate = 1 - keep_prob
+    for i in range(1, len(layers)):
+        if i == 1:
+            y = K.layers.Dropout(rate)(x)
+        else:
+            y = K.layers.Dropout(rate)(y)
+        y = K.layers.Dense(
             layers[i],
             activation=activations[i],
-            kernel_regularizer=K.regularizers.l2(lambtha))(prev_layer)
-
-        # Add dropout after the dense layer
-        dropout_layer = K.layers.Dropout(1 - keep_prob)(dense_layer)
-
-        # Set the previous layer to be the dropout layer for the next iteration
-        prev_layer = dropout_layer
-
-    # Initialize the model with the input and output layers
-    model = K.Model(inputs=inputs, outputs=prev_layer)
-
+            kernel_regularizer=K.regularizers.l2(lambtha))(y)
+    model = K.Model(inputs=inputs, outputs=y)
     return model
