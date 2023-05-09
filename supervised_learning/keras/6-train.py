@@ -25,15 +25,18 @@ def train_model(network, data, labels, batch_size, epochs,
         shuffle -- boolean that determines whether to shuffle the batches
         every epoch. Normally, it is a good idea to shuffle, but for
         reproducibility, we have chosen to set the default to False.
-        early_stopping -- boolean that indicates whether early stopping should be used
+        early_stopping -- boolean that indicates whether early stopping should
+        be used
             early stopping should only be performed if validation_data exists
             early stopping should be based on validation loss
 
         Returns: the History object generated after training the model
     """
-    callbacks = None
-    if validation_data != None and early_stopping:
-        callbacks = K.callbacks.EarlyStopping(monitor='val_loss', patience=patience)
+    if validation_data is not None and early_stopping:
+        callbacks = [K.callbacks.EarlyStopping(monitor='val_loss',
+                                               patience=patience)]
+    else:
+        callbacks = None
     return network.fit(x=data,
                        y=labels,
                        batch_size=batch_size,
@@ -41,4 +44,4 @@ def train_model(network, data, labels, batch_size, epochs,
                        verbose=verbose,
                        shuffle=shuffle,
                        validation_data=validation_data,
-                       callbacks=[callbacks])
+                       callbacks=callbacks)
