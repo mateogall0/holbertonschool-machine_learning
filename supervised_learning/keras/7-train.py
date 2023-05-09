@@ -52,7 +52,8 @@ def train_model(network, data, labels, batch_size, epochs,
         def lr_schedule(epoch):
             return alpha / (1 + decay_rate * epoch)
 
-        callbacks.append(K.callbacks.LearningRateScheduler(lr_schedule, verbose=True))
+        callbacks.append(K.callbacks.LearningRateScheduler(lr_schedule,
+                                                           verbose=True))
 
     if len(callbacks) == 0:
         callbacks = None
