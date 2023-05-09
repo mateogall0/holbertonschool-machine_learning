@@ -51,8 +51,9 @@ def train_model(network, data, labels, batch_size, epochs,
     if validation_data is not None and learning_rate_decay:
         def lr_schedule(epoch):
             lrd = alpha / (1 + decay_rate * epoch)
-            print('Epoch {:05d}: LearningRateScheduler reducing \
-learning rate to {}.'.format(epoch+1, lrd))
+            a = 'Epoch {:05d}: LearningRateScheduler reducing \
+learning rate to {}.'.format(epoch+1, lrd)
+            print(a, end='\n\n')
             return lrd
 
         callbacks.append(K.callbacks.LearningRateScheduler(lr_schedule))
