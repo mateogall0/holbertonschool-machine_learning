@@ -27,23 +27,4 @@ def train_model(network, data, labels, batch_size, epochs, verbose=True,
 
         Returns: the History object generated after training the model
     """
-    history = K.callbacks.History()
-
-    network.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
-
-    for epoch in range(epochs):
-        if shuffle:
-            permutation = np.random.permutation(data.shape[0])
-            data = data[permutation]
-            labels = labels[permutation]
-            
-        for i in range(0, data.shape[0], batch_size):
-            batch_data = data[i:i+batch_size]
-            batch_labels = labels[i:i+batch_size]
-            network.train_on_batch(batch_data, batch_labels)
-
-        if verbose:
-            loss, accuracy = network.evaluate(data, labels, verbose=0)
-            print('Epoch {}/{} - loss: {:.4f} - acc: {:.4f}'.format(epoch+1, epochs, loss, accuracy))
-
-    return history
+    return network.fit(data, labels, batch_size, epochs, verbose, shuffle)
