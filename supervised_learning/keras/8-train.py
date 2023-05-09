@@ -62,7 +62,7 @@ def train_model(network, data, labels, batch_size, epochs,
                                                            verbose=True))
 
     if validation_data is not None and save_best and filepath:
-        callbacks.append(K.callbacks.ModelCheckpoint(filepath))
+        callbacks.append(K.callbacks.ModelCheckpoint(filepath, save_best_only = True))
 
     if len(callbacks) == 0:
         callbacks = None
