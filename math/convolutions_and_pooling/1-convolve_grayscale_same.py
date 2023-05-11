@@ -33,11 +33,16 @@ def convolve_grayscale_same(images, kernel):
     oh = h - kh + 1
     ow = w - kw + 1
 
-    output = np.zeros((m, h, w))
+    output = np.zeros((m, oh, ow))
 
     # loop over each pixel
-    for i in range(oh):
-        for j in range(ow):
+    for i in range(1, oh):
+        for j in range(1, ow):
             image_patches = images[:, i:i+kh, j:j+kw]
             output[:, i, j] = np.sum(image_patches * kernel, axis=(1, 2))
+    if output.shape != images.shape:
+        pad_h = (images.shape[1] - output.shape[1]) // 2
+        pad_w = (images.shape[2] - output.shape[2]) // 2
+        return np.pad(output, ((0, 0), (pad_h, pad_h), (pad_w, pad_w)),
+                      mode='constant')
     return output
