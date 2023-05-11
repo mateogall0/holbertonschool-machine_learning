@@ -48,7 +48,9 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
         pw = (((w - 1) * sw + kw - w) // 2) + 1
 
     if ph and pw:
-        images = np.pad(images, ((0, 0), (ph, ph), (pw, pw), (0, 0)), mode='constant')
+        images = np.pad(
+            images, ((0, 0), (ph, ph), (pw, pw), (0, 0)), mode='constant'
+            )
 
     oh = ((h + (2 * ph) - kh) // sh) + 1
     ow = ((w + (2 * pw) - kw) // sw) + 1
