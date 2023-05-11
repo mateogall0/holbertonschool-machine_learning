@@ -26,23 +26,21 @@ def convolve_grayscale_same(images, kernel):
         are not allowed
         Returns: a numpy.ndarray containing the convolved images
     """
-
     m, h, w = images.shape
     kh, kw = kernel.shape
 
-    oh = h - kh + 1
-    ow = w - kw + 1
+    padding_h = max((kh - 1) // 2, kh // 2)
+    padding_w = max((kw - 1) // 2, kw // 2)
 
-    output = np.zeros((m, oh, ow))
+    padded_images = np.pad(images, ((0, 0), (padding_h, padding_h),
+                           (padding_w, padding_w)), mode='constant')
+
+    output = np.zeros((m, h, w))
 
     # loop over each pixel
-    for i in range(1, oh):
-        for j in range(1, ow):
-            image_patches = images[:, i:i+kh, j:j+kw]
-            output[:, i, j] = np.sum(image_patches * kernel, axis=(1, 2))
-    if output.shape != images.shape:
-        pad_h = (images.shape[1] - output.shape[1]) // 2
-        pad_w = (images.shape[2] - output.shape[2]) // 2
-        return np.pad(output, ((0, 0), (pad_h, pad_h), (pad_w, pad_w)),
-                      mode='constant')
+    for i in range(h):
+        for j in range(w):
+            output[:, i, j] = (kernel * padded_images[
+                :, i: i + kh, j: j + kw]).sum(axis=(1, 2))
+
     return output
