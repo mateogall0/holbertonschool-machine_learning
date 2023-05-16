@@ -34,20 +34,18 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
         sw -- stride for the width
     Returns: the output of the convolutional layer
     """
-    m, h_prev, w_prev, c_prev = A_prev.shape
-    kh, kw, c_prev, c_new = W.shape
+    m, h_prev, w_prev, _ = A_prev.shape
+    kh, kw, _, c_new = W.shape
     sh, sw = stride
 
     ph, pw = 0, 0
-    if type(padding) == tuple:
-        ph, pw = padding
-    elif padding == 'same':
+    if padding == 'same':
         ph = (((h_prev - 1) * sh + kh - h_prev) // 2)
         pw = (((w_prev - 1) * sw + kw - w_prev) // 2)
-    if ph or pw:
-        images = np.pad(A_prev, ((0, 0), (ph, ph), (pw, pw), (0, 0)), mode='constant')
-    else:
-        images = A_prev
+
+    images = np.pad(
+        A_prev, ((0, 0), (ph, ph), (pw, pw), (0, 0)), mode='constant'
+        )
 
     oh = ((h_prev + (2 * ph) - kh) // sh) + 1
     ow = ((w_prev + (2 * pw) - kw) // sw) + 1
@@ -56,9 +54,13 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
     # loop over each pixel
     for i in range(oh):
         for j in range(ow):
-            output[:, i, j, :] = np.sum(
-                W[None, ...] * images[:, i * sh:i * sh + kh, j * sw:j * sw + kw, None],
-                axis=(1, 2, 3)
-            ) + b  # Add the biases
+            for ch in range(c_new):
+                output[:, i, j, ch] = np.sum(
+                    images[
+                            :,
+                            i * sh:i * sh + kh,
+                            j * sw:j * sw + kw
+                        ] * W[:, :, :, ch], axis=(1, 2, 3)
+                    )
 
-    return activation(output)
+    return activation(output + b)
