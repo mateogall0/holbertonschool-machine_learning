@@ -42,12 +42,10 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
     if type(padding) == tuple:
         ph, pw = padding
     elif padding == 'same':
-        ph = (((h_prev - 1) * sh + kh - h_prev) // 2) + 1
-        pw = (((w_prev - 1) * sw + kw - w_prev) // 2) + 1
-    if ph and pw:
-        images = np.pad(
-            A_prev, ((0, 0), (ph, ph), (pw, pw), (0, 0)), mode='constant'
-            )
+        ph = (((h_prev - 1) * sh + kh - h_prev) // 2)
+        pw = (((w_prev - 1) * sw + kw - w_prev) // 2)
+    if ph or pw:
+        images = np.pad(A_prev, ((0, 0), (ph, ph), (pw, pw), (0, 0)), mode='constant')
     else:
         images = A_prev
 
@@ -59,8 +57,8 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
     for i in range(oh):
         for j in range(ow):
             output[:, i, j, :] = np.sum(
-                W[0:1] * images[:, i * sh:i * sh + kh, j * sw:j * sw + kw],
-                axis=(1, 2)
+                W[None, ...] * images[:, i * sh:i * sh + kh, j * sw:j * sw + kw, None],
+                axis=(1, 2, 3)
             ) + b  # Add the biases
 
     return activation(output)
