@@ -44,9 +44,12 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
     elif padding == 'same':
         ph = (((h_prev - 1) * sh + kh - h_prev) // 2) + 1
         pw = (((w_prev - 1) * sw + kw - w_prev) // 2) + 1
-    images = np.pad(
-        A_prev, ((0, 0), (ph, ph), (pw, pw), (0, 0)), mode='constant'
-        )
+    if ph and pw:
+        images = np.pad(
+            A_prev, ((0, 0), (ph, ph), (pw, pw), (0, 0)), mode='constant'
+            )
+    else:
+        images = A_prev
 
     oh = ((h_prev + (2 * ph) - kh) // sh) + 1
     ow = ((w_prev + (2 * pw) - kw) // sw) + 1
