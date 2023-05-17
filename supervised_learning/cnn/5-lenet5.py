@@ -53,6 +53,6 @@ def lenet5(X):
     model = K.models.Model(inputs=X, outputs=output)
 
     # Compile the model
-    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=K.optimizers.Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
 
     return model
