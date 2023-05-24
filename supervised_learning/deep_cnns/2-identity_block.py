@@ -32,12 +32,12 @@ def identity_block(A_prev, filters):
         padding='same',
         activation='linear')(A_prev)
     batch_norm0 = K.layers.BatchNormalization()(conv1x1)
-    activation0 = K.layers.Activation(K.activations.relu)(batch_norm0)
+    activation0 = K.layers.ReLU()(batch_norm0)
     conv3x3 = K.layers.Conv2D(F3, (3, 3), kernel_initializer=initializer,
                               padding='same',
                               activation='linear')(activation0)
     batch_norm1 = K.layers.BatchNormalization()(conv3x3)
-    activation1 = K.layers.Activation(K.activations.relu)(batch_norm1)
+    activation1 = K.layers.ReLU()(batch_norm1)
     conv_pool = K.layers.Conv2D(F12, (1, 1),
                                 kernel_initializer=initializer,
                                 padding='same',
@@ -45,4 +45,4 @@ def identity_block(A_prev, filters):
     batch_norm2 = K.layers.BatchNormalization()(conv_pool)
 
     add = K.layers.Add()([A_prev, batch_norm2])
-    return K.layers.Activation(K.activations.relu)(add)
+    return K.layers.ReLU()(add)
