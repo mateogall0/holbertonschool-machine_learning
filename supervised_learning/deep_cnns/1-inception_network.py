@@ -4,8 +4,8 @@ Inception Network
 """
 
 
-inception_block = __import__('0-inception_block').inception_block
 import tensorflow.keras as K
+inception_block = __import__('0-inception_block').inception_block
 
 
 def inception_network():
@@ -18,38 +18,72 @@ def inception_network():
     rectified linear activation (ReLU)
     Returns: the keras model
     """
-    inputs = K.layers.Input(shape=(224, 224, 3))
+    initializer = K.initializers.he_normal()
+    inputs = K.Input(shape=(224, 224, 3))
+    conv0 = K.layers.Conv2D(
+        64,
+        kernel_size=6,
+        strides=(2, 2),
+        padding='same',
+        kernel_initializer=initializer,
+        activation='relu'
+    )(inputs)
+    maxpool0 = K.layers.MaxPooling2D(
+        pool_size=(3, 3),
+        strides=(2, 2),
+        padding='same'
+    )(conv0)
 
-    # Stage 1
-    conv1 = K.layers.Conv2D(64, (7, 7), strides=(2, 2), padding='same', activation='relu')(inputs)
-    pool1 = K.layers.MaxPooling2D((3, 3), strides=(2, 2), padding='same')(conv1)
+    conv1R = K.layers.Conv2D(
+        64,
+        kernel_size=1,
+        strides=(1, 1),
+        padding='same',
+        kernel_initializer=initializer,
+        activation='relu'
+    )(maxpool0)
+    conv1 = K.layers.Conv2D(
+        192,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_initializer=initializer,
+        activation='relu'
+    )(conv1R)
+    maxpool1 = K.layers.MaxPooling2D(
+        pool_size=(3, 3),
+        strides=(2, 2),
+        padding='same'
+    )(conv1)
+    incep0 = inception_block(maxpool1, [64, 96, 128, 16, 32, 32])
+    incep1 = inception_block(incep0, [128, 128, 192, 32, 96, 64])
+    maxpool2 = K.layers.MaxPooling2D(
+        pool_size=(3, 3),
+        strides=(2, 2),
+        padding='same'
+    )(incep1)
+    incep2 = inception_block(maxpool2, [192, 96, 208, 16, 48, 64])
+    incep3 = inception_block(incep2, [160, 112, 224, 24, 64, 64])
+    incep4 = inception_block(incep3, [128, 128, 256, 24, 64, 64])
+    incep5 = inception_block(incep4, [112, 144, 288, 32, 64, 64])
+    incep6 = inception_block(incep5, [256, 160, 320, 32, 128, 128])
+    maxpool2 = K.layers.MaxPooling2D(
+        pool_size=(3, 3),
+        strides=(2, 2),
+        padding='same'
+    )(incep6)
+    incep7 = inception_block(maxpool2, [256, 160, 320, 32, 128, 128])
+    incep8 = inception_block(incep7, [384, 192, 384, 48, 128, 128])
+    avgpool0 = K.layers.AveragePooling2D(
+        pool_size=(7, 7),
+        strides=(1, 1),
+        padding='same'
+    )(incep8)
+    dropout = K.layers.Dropout(rate=0.4)(avgpool0)
+    softmax = K.layers.Dense(
+        units=1000,
+        activation='softmax',
+        kernel_initializer=initializer
+    )(dropout)
 
-    # Stage 2
-    conv2_1 = K.layers.Conv2D(64, (1, 1), padding='same', activation='relu')(pool1)
-    conv2_2 = K.layers.Conv2D(192, (3, 3), padding='same', activation='relu')(conv2_1)
-    pool2 = K.layers.MaxPooling2D((3, 3), strides=(2, 2), padding='same')(conv2_2)
-
-    # Stage 3
-    inception3a = inception_block(pool2, [64, 96, 128, 16, 32, 32])
-    inception3b = inception_block(inception3a, [128, 128, 192, 32, 96, 64])
-    pool3 = K.layers.MaxPooling2D((3, 3), strides=(2, 2), padding='same')(inception3b)
-
-    # Stage 4
-    inception4a = inception_block(pool3, [192, 96, 208, 16, 48, 64])
-    inception4b = inception_block(inception4a, [160, 112, 224, 24, 64, 64])
-    inception4c = inception_block(inception4b, [128, 128, 256, 24, 64, 64])
-    inception4d = inception_block(inception4c, [112, 144, 288, 32, 64, 64])
-    inception4e = inception_block(inception4d, [256, 160, 320, 32, 128, 128])
-    pool4 = K.layers.MaxPooling2D((3, 3), strides=(2, 2), padding='same')(inception4e)
-
-    # Stage 5
-    inception5a = inception_block(pool4, [256, 160, 320, 32, 128, 128])
-    inception5b = inception_block(inception5a, [384, 192, 384, 48, 128, 128])
-
-    # Average pooling
-    avg_pool = K.layers.GlobalAveragePooling2D()(inception5b)
-
-    # Fully connected layer
-    fc = K.layers.Dense(1000, activation='softmax')(avg_pool)
-
-    return K.models.Model(inputs=inputs, outputs=fc)
+    return K.Model(inputs=inputs, outputs=softmax)
