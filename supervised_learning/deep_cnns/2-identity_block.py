@@ -44,5 +44,5 @@ def identity_block(A_prev, filters):
                                 activation='linear')(activation1)
     batch_norm2 = K.layers.BatchNormalization()(conv_pool)
 
-    add = K.layers.Add()([A_prev, batch_norm2])
+    add = K.layers.Add()([batch_norm2, A_prev])
     return K.layers.ReLU()(add)
