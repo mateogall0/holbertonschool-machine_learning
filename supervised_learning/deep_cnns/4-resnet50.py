@@ -22,11 +22,11 @@ def resnet50():
     Returns: the keras model
     """
     X = K.Input(shape=(224, 224, 3))
-
+    initializer = K.initializers.he_normal()
     conv1 = K.layers.Conv2D(64,
                             kernel_size=(7, 7),
                             strides=(2, 2),
-                            padding="same", kernel_initializer='he_normal')(X)
+                            padding="same", kernel_initializer=initializer)(X)
     norm1 = K.layers.BatchNormalization()(conv1)
     act1 = K.layers.Activation("relu")(norm1)
 
@@ -66,10 +66,8 @@ def resnet50():
                                          strides=(1, 1),
                                          padding="valid")(conv5_x_3)
 
-    softmax = K.layers.Dense(1000,
+    softmax = K.layers.Dense(units=1000,
                              activation="softmax",
-                             kernel_initializer='he_normal')(pool1)
+                             kernel_initializer=initializer)(pool1)
 
-    model = K.Model(inputs=X, outputs=softmax)
-
-    return model
+    return K.Model(inputs=X, outputs=softmax)
