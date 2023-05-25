@@ -22,13 +22,13 @@ def resnet50():
     Returns: the keras model
     """
     initializer = K.initializers.he_normal()
-    input = K.Input(shape=(224, 224, 3))
+    input_data = K.Input(shape=(224, 224, 3))
 
     conv0 = K.layers.Conv2D(filters=64,
                             kernel_size=(7, 7),
                             strides=(2, 2),
                             padding="same",
-                            kernel_initializer=initializer)(input)
+                            kernel_initializer=initializer)(input_data)
     batch1 = K.layers.BatchNormalization(axis=3)(conv0)
     activation0 = K.layers.Activation('relu')(batch1)
     pool0 = K.layers.MaxPooling2D(pool_size=(3, 3),
@@ -58,4 +58,4 @@ def resnet50():
     softmax = K.layers.Dense(units=1000,
                              activation="softmax",
                              kernel_initializer=initializer)(pool1)
-    return K.models.Model(inputs=input, outputs=softmax)
+    return K.models.Model(inputs=input_data, outputs=softmax)
