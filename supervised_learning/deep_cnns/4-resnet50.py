@@ -21,53 +21,41 @@ def resnet50():
     All weights should use he normal initialization
     Returns: the keras model
     """
-    X = K.Input(shape=(224, 224, 3))
     initializer = K.initializers.he_normal()
-    conv1 = K.layers.Conv2D(64,
+    input = K.Input(shape=(224, 224, 3))
+
+    conv0 = K.layers.Conv2D(filters=64,
                             kernel_size=(7, 7),
                             strides=(2, 2),
-                            padding="same", kernel_initializer=initializer)(X)
-    norm1 = K.layers.BatchNormalization()(conv1)
-    act1 = K.layers.Activation("relu")(norm1)
+                            padding="same",
+                            kernel_initializer=initializer)(input)
+    batch1 = K.layers.BatchNormalization(axis=3)(conv0)
+    activation0 = K.layers.Activation('relu')(batch1)
+    pool0 = K.layers.MaxPooling2D(pool_size=(3, 3),
+                                  strides=(2, 2),
+                                  padding="same")(activation0)
 
-    pool0 = K.layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2),
-                                     padding="same")(act1)
+    prblock_1_2x = projection_block(pool0, [64, 64, 256], s=1)
+    idblock_1_2x = identity_block(prblock_1_2x, [64, 64, 256])
+    idblock_2_2x = identity_block(idblock_1_2x, [64, 64, 256])
+    prblock_1_3x = projection_block(idblock_2_2x, [128, 128, 512])
+    idblock_1_3x = identity_block(prblock_1_3x, [128, 128, 512])
+    idblock_2_3x = identity_block(idblock_1_3x, [128, 128, 512])
+    idblock_3_3x = identity_block(idblock_2_3x, [128, 128, 512])
+    prblock_1_4x = projection_block(idblock_3_3x, [256, 256, 1024])
+    idblock_1_4x = identity_block(prblock_1_4x, [256, 256, 1024])
+    idblock_2_4x = identity_block(idblock_1_4x, [256, 256, 1024])
+    idblock_3_4x = identity_block(idblock_2_4x, [256, 256, 1024])
+    idblock_4_4x = identity_block(idblock_3_4x, [256, 256, 1024])
+    idblock_5_4x = identity_block(idblock_4_4x, [256, 256, 1024])
+    prblock_1_5x = projection_block(idblock_5_4x, [512, 512, 2048])
+    idblock_1_5x = identity_block(prblock_1_5x, [512, 512, 2048])
+    idblock_2_5x = identity_block(idblock_1_5x, [512, 512, 2048])
 
-    # Conv2_x blocks
-    conv2_x_1 = projection_block(pool0, [64, 64, 256], 1)
-
-    conv2_x_2 = identity_block(conv2_x_1, [64, 64, 256])
-    conv2_x_3 = identity_block(conv2_x_2, [64, 64, 256])
-
-    # Conv3_x blocks
-    conv3_x_1 = projection_block(conv2_x_3, [128, 128, 512])
-
-    conv3_x_2 = identity_block(conv3_x_1, [128, 128, 512])
-    conv3_x_3 = identity_block(conv3_x_2, [128, 128, 512])
-    conv3_x_4 = identity_block(conv3_x_3, [128, 128, 512])
-
-    # Conv4_x blocks
-
-    conv4_x_1 = projection_block(conv3_x_4, [256, 256, 1024])
-
-    conv4_x_2 = identity_block(conv4_x_1, [256, 256, 1024])
-    conv4_x_3 = identity_block(conv4_x_2, [256, 256, 1024])
-    conv4_x_4 = identity_block(conv4_x_3, [256, 256, 1024])
-    conv4_x_5 = identity_block(conv4_x_4, [256, 256, 1024])
-    conv4_x_6 = identity_block(conv4_x_5, [256, 256, 1024])
-
-    # Conv5_x blocks
-    conv5_x_1 = projection_block(conv4_x_6, [512, 512, 2048])
-
-    conv5_x_2 = identity_block(conv5_x_1, [512, 512, 2048])
-    conv5_x_3 = identity_block(conv5_x_2, [512, 512, 2048])
-
-    pool1 = K.layers.AveragePooling2D(pool_size=(7, 7),
-                                         strides=(1, 1),
-                                         padding="valid")(conv5_x_3)
-
+    pool1 = K.layers.AvgPool2D(pool_size=(7, 7),
+                               strides=(1, 1),
+                               padding="valid")(idblock_2_5x)
     softmax = K.layers.Dense(units=1000,
                              activation="softmax",
                              kernel_initializer=initializer)(pool1)
-
-    return K.Model(inputs=X, outputs=softmax)
+    return K.models.Model(inputs=input, outputs=softmax)
