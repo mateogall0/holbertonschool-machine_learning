@@ -25,12 +25,9 @@ def resnet50():
 
     X_input = K.Input(input_shape)
 
-    # Zero-padding
-    X = K.layers.ZeroPadding2D((3, 3))(X_input)
-
     # Stage 1
     X = K.layers.Conv2D(64, (7, 7), strides=(2, 2),
-                        kernel_initializer='he_normal')(X)
+                        kernel_initializer='he_normal')(X_input)
     X = K.layers.BatchNormalization(axis=3)(X)
     X = K.layers.Activation('relu')(X)
     X = K.layers.MaxPooling2D((3, 3), strides=(2, 2))(X)
@@ -67,6 +64,4 @@ def resnet50():
     X = K.layers.Dense(1000, activation='softmax')(X)
 
     # Create model
-    model = K.models.Model(inputs=X_input, outputs=X)
-
-    return model
+    return K.models.Model(inputs=X_input, outputs=X)
