@@ -23,34 +23,47 @@ def densenet121(growth_rate=32, compression=1.0):
     Returns: the keras model
     """
     init = K.initializers.he_normal()
-
     X = K.Input(shape=(224, 224, 3))
+    n_filters = 2 * growth_rate
 
-    bacth0 = K.layers.BatchNormalization()(X)
-    relu0 = K.layers.Activation('relu')(bacth0)
+    norm1 = K.layers.BatchNormalization()(X)
+    act1 = K.layers.Activation("relu")(norm1)
+    conv1 = K.layers.Conv2D(filters=n_filters, kernel_size=(7, 7),
+                            padding="same",
+                            strides=(2, 2),
+                            kernel_initializer=init)(act1)
 
-    conv1 = K.layers.Conv2D(filters=2*growth_rate, kernel_size=7,
-                            strides=2, padding='same',
-                            kernel_initializer=init)(relu0)
+    max_pool = K.layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2),
+                                     padding="same")(conv1)
 
-    max_pool1 = K.layers.MaxPooling2D(pool_size=3, strides=2,
-                                      padding='same')(conv1)
+    # First block
+    dense_block1, n_filters = dense_block(max_pool, n_filters, growth_rate, 6)
 
-    dense1, nb_f1 = dense_block(max_pool1, 2*growth_rate, growth_rate, 6)
-    trans1, nb_f2 = transition_layer(dense1, nb_f1, compression)
+    transition_layer1, n_filters = transition_layer(dense_block1, n_filters,
+                                                    compression)
 
-    dense2, nb_f3 = dense_block(trans1, nb_f2, growth_rate, 12)
-    trans2, nb_f4 = transition_layer(dense2, nb_f3, compression)
+    # Second block
+    dense_block2, n_filters = dense_block(transition_layer1, n_filters,
+                                          growth_rate, 12)
 
-    dense3, nb_f5 = dense_block(trans2, nb_f4, growth_rate, 24)
-    trans3, nb_f6 = transition_layer(dense3, nb_f5, compression)
+    transition_layer2, n_filters = transition_layer(dense_block2, n_filters,
+                                                    compression)
 
-    dense4, nb_f7 = dense_block(trans3, nb_f6, growth_rate, 16)
+    # Third Block
+    dense_block3, n_filters = dense_block(transition_layer2, n_filters,
+                                          growth_rate, 24)
 
-    avg_pool = K.layers.AveragePooling2D(pool_size=7, padding='same')(dense4)
+    transition_layer3, n_filters = transition_layer(dense_block3, n_filters,
+                                                    compression)
 
-    FC = K.layers.Dense(1000, activation='softmax',
-                        kernel_initializer=init)(avg_pool)
+    # Last block (no transition)
+    dense_block4, n_filters = dense_block(transition_layer3, n_filters,
+                                          growth_rate, 16)
 
-    model = K.model.Model(inputs=X, outputs=FC)
-    return model
+    avg_pool = K.layers.AveragePooling2D(pool_size=(7, 7), strides=(1, 1),
+                                         padding="valid")(dense_block4)
+
+    softmax = K.layers.Dense(units=1000, activation="softmax",
+                             kernel_initializer=init)(avg_pool)
+
+    return K.Model(inputs=X, outputs=softmax)
