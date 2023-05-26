@@ -29,8 +29,8 @@ def densenet121(growth_rate=32, compression=1.0):
     batch0 = K.layers.BatchNormalization()(input_data)
     activation0 = K.layers.Activation('relu')(batch0)
     conv0 = K.layers.Conv2D(filters=filters,
-                            kernel_size=(7, 7),
-                            strides=(2, 2),
+                            kernel_size=7,
+                            strides=2,
                             padding="same",
                             kernel_initializer=initializer)(activation0)
 
@@ -38,22 +38,16 @@ def densenet121(growth_rate=32, compression=1.0):
                                   strides=(2, 2),
                                   padding="same")(conv0)
 
-    dense_block1, filters = dense_block(pool0, filters,
-                                        growth_rate, 6)
-    transition_layer1, filters = transition_layer(dense_block1,
-                                                  filters, compression)
-    dense_block2, filters = dense_block(transition_layer1,
-                                        filters, growth_rate, 12)
-    transition_layer2, filters = transition_layer(dense_block2,
-                                                  filters, compression)
-    dense_block3, filters = dense_block(transition_layer2,
-                                        filters, growth_rate, 24)
-    transition_layer3, filters = transition_layer(dense_block3,
-                                                  filters, compression)
-    dense_block4, filters = dense_block(transition_layer3,
-                                        filters, growth_rate, 16)
+    dense_block1, filters = dense_block(pool0, filters, growth_rate, 6)
+    transition_layer1, filters = transition_layer(dense_block1, filters, compression)
+    dense_block2, filters = dense_block(transition_layer1, filters, growth_rate, 12)
+    transition_layer2, filters = transition_layer(dense_block2, filters, compression)
+    dense_block3, filters = dense_block(transition_layer2, filters, growth_rate, 24)
+    transition_layer3, filters = transition_layer(dense_block3, filters, compression)
+    dense_block4, filters = dense_block(transition_layer3, filters, growth_rate, 16)
     pool1 = K.layers.AveragePooling2D(
-        pool_size=(7, 7)
+        pool_size=(7, 7),
+        padding='same'
     )(dense_block4)
     softmax = K.layers.Dense(
         1000,
