@@ -22,15 +22,15 @@ def inception_network():
     inputs = K.Input(shape=(224, 224, 3))
     conv0 = K.layers.Conv2D(
         64,
-        kernel_size=6,
-        strides=(2, 2),
+        kernel_size=7,
+        strides=2,
         padding='same',
         kernel_initializer=initializer,
         activation='relu'
     )(inputs)
     maxpool0 = K.layers.MaxPooling2D(
-        pool_size=(3, 3),
-        strides=(2, 2),
+        pool_size=3,
+        strides=2,
         padding='same'
     )(conv0)
 
@@ -77,7 +77,7 @@ def inception_network():
     avgpool0 = K.layers.AveragePooling2D(
         pool_size=(7, 7),
         strides=(1, 1),
-        padding='same'
+        padding='valid'
     )(incep8)
     dropout = K.layers.Dropout(rate=0.4)(avgpool0)
     softmax = K.layers.Dense(
