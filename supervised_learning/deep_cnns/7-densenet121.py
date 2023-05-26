@@ -36,27 +36,23 @@ def densenet121(growth_rate=32, compression=1.0):
     max_pool = K.layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2),
                                      padding="same")(conv1)
 
-    # First block
     dense_block1, n_filters = dense_block(max_pool, n_filters, growth_rate, 6)
 
     transition_layer1, n_filters = transition_layer(dense_block1, n_filters,
                                                     compression)
 
-    # Second block
     dense_block2, n_filters = dense_block(transition_layer1, n_filters,
                                           growth_rate, 12)
 
     transition_layer2, n_filters = transition_layer(dense_block2, n_filters,
                                                     compression)
 
-    # Third Block
     dense_block3, n_filters = dense_block(transition_layer2, n_filters,
                                           growth_rate, 24)
 
     transition_layer3, n_filters = transition_layer(dense_block3, n_filters,
                                                     compression)
 
-    # Last block (no transition)
     dense_block4, n_filters = dense_block(transition_layer3, n_filters,
                                           growth_rate, 16)
 
