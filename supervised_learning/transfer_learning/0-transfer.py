@@ -55,7 +55,7 @@ if __name__ == '__main__':
         ))
 
     model.fit(X_p, Y_p,
-              batch_size=32, epochs=10,
+              batch_size=512, epochs=15,
               callbacks=callbacks,
               validation_data=(X_test, Y_test))
 
