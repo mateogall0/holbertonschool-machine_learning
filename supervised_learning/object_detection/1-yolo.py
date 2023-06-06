@@ -22,7 +22,6 @@ class Yolo:
         self.nms_t = nms_t
         self.anchors = anchors
 
-
     def process_outputs(self, outputs, image_size):
         """
         outputs -- list of numpy.ndarrays containing the predictions from the
@@ -57,37 +56,50 @@ class Yolo:
         ih, iw = image_size
 
         for i, output in enumerate(outputs):
+            # Get dimensions of the current output
             gh, gw, anchorBoxes, _ = output.shape
+
+            # Create an empty array to store processed boundary boxes
             box = np.zeros(output[:, :, :, :4].shape)
 
+            # Extract predicted coordinates and dimensions of boundary boxes
             tx = output[:, :, :, 0]
             ty = output[:, :, :, 1]
             tw = output[:, :, :, 2]
             th = output[:, :, :, 3]
 
+            # Get anchor box widths and heights for each grid cell
             pwTotal = self.anchors[:, :, 0]
             phTotal = self.anchors[:, :, 1]
+
+            # Reshape anchor box widths and heights to match grid dimensions
             pw = np.tile(pwTotal[i], gw).reshape(gw, 1, len(pwTotal[i]))
             ph = np.tile(phTotal[i], gh).reshape(gh, 1, len(phTotal[i]))
 
+            # Create grid coordinates for positioning boundary boxes
             cx = np.tile(np.arange(gw), gh).reshape(gw, gw, 1)
-            cy = np.tile(np.arange(gw), gh).reshape(gh, gh).T.reshape(gh, gh, 1)
+            cy = np.tile(np.arange(gw),
+                         gh).reshape(gh, gh).T.reshape(gh, gh, 1)
 
+            # Compute absolute coordinates and dimensions of boundary boxes
             bx = (1 / (1 + np.exp(-tx)) + cx) / gw
             by = (1 / (1 + np.exp(-ty)) + cy) / gh
             bw = (np.exp(tw) * pw) / self.model.input.shape[1].value
             bh = (np.exp(th) * ph) / self.model.input.shape[2].value
 
+            # Update box array with computed box coordinates and dimensions
             box[:, :, :, 0] = (bx - (bw / 2)) * iw
             box[:, :, :, 1] = (by - (bh / 2)) * ih
             box[:, :, :, 2] = (bx + (bw / 2)) * iw
             box[:, :, :, 3] = (by + (bh / 2)) * ih
             boxes.append(box)
 
+            # Compute box confidences and reshape to match grid dimensions
             temp = output[:, :, :, 4]
             sigmoid = (1 / (1 + np.exp(-temp)))
             box_confidences.append(sigmoid.reshape(gh, gw, anchorBoxes, 1))
 
+            # Compute box class probabilities
             temp = output[:, :, :, 5:]
             box_class_probs.append((1 / (1 + np.exp(-temp))))
 
