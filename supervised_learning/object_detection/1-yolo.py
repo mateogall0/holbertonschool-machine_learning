@@ -54,26 +54,41 @@ class Yolo:
         boxes = []
         box_confidences = []
         box_class_probs = []
+        ih, iw = image_size
 
-        for output in outputs:
-            grid_height, grid_width, _, _ = output.shape
-            box = np.zeros_like(output[..., :4])
-            box[..., 0] = (1 / (1 + np.exp(-output[..., 0])) + np.arange(grid_width)[np.newaxis, np.newaxis, :, np.newaxis])
-            box[..., 1] = (1 / (1 + np.exp(-output[..., 1])) + np.arange(grid_height)[np.newaxis, :, np.newaxis])
-            box[..., 2] = np.exp(output[..., 2]) * self.anchors[:, 0][np.newaxis, np.newaxis, :, 0]
-            box[..., 3] = np.exp(output[..., 3]) * self.anchors[:, 1][np.newaxis, np.newaxis, :, 1]
-            box[..., 0:2] /= np.array([grid_width, grid_height])
-            box[..., 2:4] /= np.array([self.model.input.shape[1].value, self.model.input.shape[2].value])
-            box[..., 0] *= image_size[1]
-            box[..., 1] *= image_size[0]
-            box[..., 2] *= image_size[1]
-            box[..., 3] *= image_size[0]
+        for i, output in enumerate(outputs):
+            gh, gw, anchorBoxes, _ = output.shape
+            box = np.zeros(output[:, :, :, :4].shape)
 
-            box_confidence = 1 / (1 + np.exp(-output[..., 4:5]))
-            box_class_prob = 1 / (1 + np.exp(-output[..., 5:]))
+            tx = output[:, :, :, 0]
+            ty = output[:, :, :, 1]
+            tw = output[:, :, :, 2]
+            th = output[:, :, :, 3]
 
+            pwTotal = self.anchors[:, :, 0]
+            phTotal = self.anchors[:, :, 1]
+            pw = np.tile(pwTotal[i], gw).reshape(gw, 1, len(pwTotal[i]))
+            ph = np.tile(phTotal[i], gh).reshape(gh, 1, len(phTotal[i]))
+
+            cx = np.tile(np.arange(gw), gh).reshape(gw, gw, 1)
+            cy = np.tile(np.arange(gw), gh).reshape(gh, gh).T.reshape(gh, gh, 1)
+
+            bx = (1 / (1 + np.exp(-tx)) + cx) / gw
+            by = (1 / (1 + np.exp(-ty)) + cy) / gh
+            bw = (np.exp(tw) * pw) / self.model.input.shape[1].value
+            bh = (np.exp(th) * ph) / self.model.input.shape[2].value
+
+            box[:, :, :, 0] = (bx - (bw / 2)) * iw
+            box[:, :, :, 1] = (by - (bh / 2)) * ih
+            box[:, :, :, 2] = (bx + (bw / 2)) * iw
+            box[:, :, :, 3] = (by + (bh / 2)) * ih
             boxes.append(box)
-            box_confidences.append(box_confidence)
-            box_class_probs.append(box_class_prob)
+
+            temp = output[:, :, :, 4]
+            sigmoid = (1 / (1 + np.exp(-temp)))
+            box_confidences.append(sigmoid.reshape(gh, gw, anchorBoxes, 1))
+
+            temp = output[:, :, :, 5:]
+            box_class_probs.append((1 / (1 + np.exp(-temp))))
 
         return boxes, box_confidences, box_class_probs
