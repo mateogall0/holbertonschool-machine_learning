@@ -4,7 +4,7 @@ Initialize Yolo
 """
 
 
-import tensorflow.keras as K
+import tensorflow as tf
 import numpy as np
 
 
@@ -13,7 +13,7 @@ class Yolo:
     Yolo class
     """
     def __init__(self, model_path, classes_path, class_t, nms_t, anchors):
-        self.model = K.models.load_model(model_path)
+        self.model = tf.keras.models.load_model(model_path)
         with open(classes_path, 'r') as classes_file:
             self.class_names = [
                 line.strip() for line in classes_file.readlines()
