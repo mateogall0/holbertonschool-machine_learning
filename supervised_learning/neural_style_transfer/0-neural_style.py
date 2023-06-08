@@ -40,15 +40,16 @@ shape (h, w, 3)')
         if type(image) != np.ndarray or image.shape[-1] != 3:
             raise TypeError("image must be a numpy.ndarray with shape \
 (h, w, 3)")
-
         h, w = image.shape[:2]
         max_side = max(h, w)
+        min_side = min(h, w)
         scale_factor = 512 / max_side
-        new_h, new_w = int(scale_factor * h), int(scale_factor * w)
-        resized_image = tf.image.resize_images(image, (new_h, new_w))
+        new_h, new_w = scale_factor * h, scale_factor * w
+        resized_image = tf.constant(image)
         resized_image = tf.expand_dims(resized_image, axis=0)
-        resized_image = tf.cast(resized_image, tf.float32) / 255
+        resized_image = tf.image.resize_images(resized_image, (new_h, new_w))
+        resized_image = resized_image / 255
         resized_image = tf.clip_by_value(resized_image,
-                                         clip_value_min=0,
-                                         clip_value_max=1)
+                                         clip_value_min=0.0,
+                                         clip_value_max=1.0)
         return resized_image
