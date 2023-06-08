@@ -24,9 +24,9 @@ shape (h, w, 3)')
             raise TypeError('content_image must be a numpy.ndarray with shape \
 (h, w, 3)')
         if (type(alpha) != int and type(alpha) != float) or alpha <= 0:
-            raise ValueError('alpha must be a non-negative number')
+            raise TypeError('alpha must be a non-negative number')
         if (type(beta) != int and type(beta) != float) or beta <= 0:
-            raise ValueError('beta must be a non-negative number')
+            raise TypeError('beta must be a non-negative number')
 
         tf.enable_eager_execution()
         self.style_image = self.scale_image(style_image)
