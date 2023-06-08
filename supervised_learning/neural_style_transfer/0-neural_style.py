@@ -28,6 +28,7 @@ shape (h, w, 3)')
         if beta <= 0:
             raise ValueError('beta must be a non-negative number')
 
+        tf.enable_eager_execution()
         self.style_image = self.scale_image(style_image)
         self.content_image = self.scale_image(content_image)
         self.alpha = alpha
@@ -42,8 +43,6 @@ shape (h, w, 3)')
         max_side = max(h, w)
         scale_factor = 512 / max_side
         new_h, new_w = int(scale_factor * h), int(scale_factor * w)
-
         resized_image = tf.image.resize_images(image, (new_h, new_w))
-        scaled_image = resized_image / 255
-        return scaled_image
+        return resized_image
         
