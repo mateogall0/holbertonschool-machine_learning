@@ -124,31 +124,25 @@ class Yolo:
             box_scores -- numpy.ndarray of shape (?) containing the box scores
             for each box in filtered_boxes, respectively
         """
-        # Flatten the boxes, box_confidences, and box_class_probs lists
+        # Flatten the boxes
         boxes = [box.reshape(-1, 4) for box in boxes]
-        box_confidences = [
-            box_confidence.reshape(-1, 1) for box_confidence in box_confidences
-            ]
-        box_class_probs = [
-            box_class_prob.reshape(
-                -1,
-                len(self.class_names)) for box_class_prob in box_class_probs
-            ]
-
-        # Concatenate the flattened arrays
-        boxes = np.concatenate(boxes)
-        box_confidences = np.concatenate(box_confidences)
-        box_class_probs = np.concatenate(box_class_probs)
 
         # Find the box scores by multiplying box_confidences with
         # box_class_probs
-        box_scores = box_confidences * box_class_probs
+        box_scores = np.array(box_confidences) * np.array(box_class_probs)
+
+        b_classe = [np.argmax(b, -1) for b in box_scores]
+        b_classe = [c.reshape(-1) for c in b_classe]
+
+        b_score = [np.max(b, -1) for b in box_scores]
+        b_score = [cs.reshape(-1) for cs in b_score]
+
+        # Concatenate the flattened arrays
+        boxes = np.concatenate(boxes)
+        b_score = np.concatenate(b_score)
+        b_classe = np.concatenate(b_classe)
 
         # Filter boxes based on box_scores and class threshold
-        box_mask = box_scores >= self.class_t
-        box_mask = np.any(box_mask, axis=-1)
-        filtered_boxes = boxes[box_mask]
-        box_classes = np.argmax(box_scores, axis=-1)[box_mask]
-        box_scores = np.max(box_scores, axis=-1)[box_mask]
+        box_mask = np.where(b_score >= self.class_t)
 
-        return filtered_boxes, box_classes, box_scores
+        return boxes[box_mask], b_classe[box_mask], b_score[box_mask]
