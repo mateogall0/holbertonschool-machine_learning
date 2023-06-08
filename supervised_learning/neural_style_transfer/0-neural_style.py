@@ -23,9 +23,9 @@ shape (h, w, 3)')
         if type(content_image) != np.ndarray or content_image.shape[-1] != 3:
             raise TypeError('content_image must be a numpy.ndarray with shape \
 (h, w, 3)')
-        if type(alpha) != float or alpha <= 0:
+        if type(alpha) != int or type(alpha) != float or alpha <= 0:
             raise ValueError('alpha must be a non-negative number')
-        if type(beta) != float or beta <= 0:
+        if type(beta) != int or type(beta) != float or beta <= 0:
             raise ValueError('beta must be a non-negative number')
 
         tf.enable_eager_execution()
