@@ -44,5 +44,5 @@ shape (h, w, 3)')
         scale_factor = 512 / max_side
         new_h, new_w = int(scale_factor * h), int(scale_factor * w)
         resized_image = tf.image.resize_images(image, (new_h, new_w))
-        return resized_image
+        return resized_image / 255
         
