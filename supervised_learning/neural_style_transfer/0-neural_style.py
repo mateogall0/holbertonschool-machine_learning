@@ -50,4 +50,4 @@ shape (h, w, 3)')
             resized_image, clip_value_min=0, clip_value_max=255
             )
         resized_image = resized_image / 255.0
-        return resized_image
+        return tf.cast(resized_image, tf.float32)
