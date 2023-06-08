@@ -33,16 +33,17 @@ shape (h, w, 3)')
         self.content_image = self.scale_image(content_image)
         self.alpha = alpha
         self.beta = beta
-    
+
     @staticmethod
     def scale_image(image):
         if type(image) != np.ndarray or image.shape[-1] != 3:
-            raise TypeError("image must be a numpy.ndarray with shape (h, w, 3)")
+            raise TypeError("image must be a numpy.ndarray with shape\
+(h, w, 3)")
 
         h, w = image.shape[:2]
         max_side = max(h, w)
         scale_factor = 512 / max_side
         new_h, new_w = int(scale_factor * h), int(scale_factor * w)
         resized_image = tf.image.resize_images(image, (new_h, new_w))
+        resized_image = tf.expand_dims(resized_image, axis=0)
         return resized_image / 255
-        
