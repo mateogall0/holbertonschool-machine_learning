@@ -34,6 +34,7 @@ shape (h, w, 3)')
         self.alpha = alpha
         self.beta = beta
 
+
     @staticmethod
     def scale_image(image):
         if type(image) != np.ndarray or image.shape[-1] != 3:
@@ -46,9 +47,8 @@ shape (h, w, 3)')
         new_h, new_w = int(scale_factor * h), int(scale_factor * w)
         resized_image = tf.image.resize_images(image, (new_h, new_w))
         resized_image = tf.expand_dims(resized_image, axis=0)
-        resized_image = tf.cast(
-            resized_image, tf.float32) / tf.constant(255.0, dtype=tf.float32)
+        resized_image = tf.cast(resized_image, tf.float32) / 255
         resized_image = tf.clip_by_value(resized_image,
-                                         clip_value_min=0.0,
-                                         clip_value_max=1.0)
+                                         clip_value_min=0,
+                                         clip_value_max=1)
         return resized_image
