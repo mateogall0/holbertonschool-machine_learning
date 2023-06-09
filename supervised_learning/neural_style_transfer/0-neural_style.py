@@ -43,11 +43,11 @@ shape (h, w, 3)')
         max_side = max(h, w)
         scale_factor = 512 / max_side
         new_h, new_w = scale_factor * h, scale_factor * w
-        resized_image = tf.constant(image, tf.int32)
+        resized_image = tf.constant(image, tf.float32)
         resized_image = tf.expand_dims(resized_image, axis=0)
         resized_image = tf.image.resize_images(resized_image, [new_h, new_w])
         resized_image = resized_image / 255.0
         resized_image = tf.clip_by_value(
             resized_image, clip_value_min=0, clip_value_max=1
             )
-        return tf.cast(resized_image, tf.float32)
+        return resized_image
