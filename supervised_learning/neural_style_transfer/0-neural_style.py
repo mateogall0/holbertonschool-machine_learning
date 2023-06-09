@@ -46,7 +46,7 @@ shape (h, w, 3)')
         resized_image = tf.constant(image, tf.float32)
         resized_image = tf.expand_dims(resized_image, axis=0)
         resized_image = tf.image.resize_images(resized_image, [new_h, new_w])
-        resized_image = resized_image / 255.0
+        resized_image = tf.math.divide(resized_image, 255.0)
         resized_image = tf.clip_by_value(
             resized_image, clip_value_min=0, clip_value_max=1
             )
