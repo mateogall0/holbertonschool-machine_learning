@@ -27,10 +27,14 @@ def determinant(matrix):
         d = matrix[1][1]
         return a * d - b * c
 
-    if len(matrix) == 3:
-        a, b, c = matrix[0][0:3]
-        d, e, f = matrix[1][0:3]
-        g, h, i = matrix[2][0:3]
-        return (
-            a * (e*i - f*h) - b * (d*i - f*g) + c * (d*h - e*g)
-        )
+    det = 0
+    for i in range(len(matrix)):
+        cofactor = (-1) ** i
+        sub_matrix = []
+        for j in range(1, len(matrix)):
+            sub_matrix_row = matrix[j][:i] + matrix[j][i + 1:]
+            sub_matrix.append(sub_matrix_row)
+        sub_det = determinant(sub_matrix)
+        det += cofactor * matrix[0][i] * sub_det
+
+    return det
