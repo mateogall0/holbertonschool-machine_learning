@@ -14,6 +14,9 @@ def definiteness(matrix):
     if not isinstance(matrix, np.ndarray):
         raise TypeError('matrix must be a numpy.ndarray')
 
+    if not np.array_equal(matrix, matrix.T):
+        return
+
     try:
         eigenvalues = np.linalg.eigvals(matrix)
     except Exception:
