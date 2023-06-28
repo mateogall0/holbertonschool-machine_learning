@@ -13,9 +13,14 @@ def mean_cov(X):
     """
     if X.ndim != 2:
         raise TypeError('X must be a 2D numpy.ndarray')
-    if X.shape[0] < 2:
+    n, _ = X.shape
+    if n < 2:
         raise ValueError('X must contain multiple data points')
 
     mean = np.mean(X, axis=0)
-    cov = np.cov(X, rowvar=False)
+    mean = np.reshape(mean, (1, mean.shape[0]))
+    cov = X - mean
+    cov = np.dot(cov.T, cov)
+    cov = cov / n
+
     return mean, cov
