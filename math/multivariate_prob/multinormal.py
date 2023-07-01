@@ -26,6 +26,8 @@ class MultiNormal:
     def pdf(self, x):
         """
         Calculates the PDF at a data point
+        f(x) = (1 / (sqrt((2 * π)^k * det(Σ)))) *
+              exp(-0.5 * (x - μ)^T * Σ^(-1) * (x - μ))
         """
         if not isinstance(x, np.ndarray):
             raise TypeError('x must be a numpy.ndarray')
@@ -37,10 +39,11 @@ class MultiNormal:
             k = self.mean.shape[0]
             det_cov = np.linalg.det(self.cov)
             inv_cov = np.linalg.inv(self.cov)
-            
-            exponent = -0.5 * np.dot(np.dot((x - self.mean).T, inv_cov), (x - self.mean))
+
+            exponent = -0.5 * np.dot(np.dot((x - self.mean).T, inv_cov),
+                                     (x - self.mean))
             coefficient = 1 / (np.sqrt((2 * np.pi) ** k * det_cov))
-            
+
             pdf = coefficient * np.exp(exponent)
         except Exception:
             raise ValueError('x must have the shape ({}, 1)'.format(
