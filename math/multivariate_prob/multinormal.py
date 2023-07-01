@@ -36,4 +36,4 @@ class MultiNormal:
             np.linalg.inv(self.cov) @ (x - self.mean)
             )
         pdf /= np.sqrt((2 * np.pi) ** len(x) * np.linalg.det(self.cov))
-        return pdf
+        return pdf[0][0]
