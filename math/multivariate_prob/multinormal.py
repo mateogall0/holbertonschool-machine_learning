@@ -29,6 +29,10 @@ class MultiNormal:
         """
         if not isinstance(x, np.ndarray):
             raise TypeError('x must be a numpy.ndarray')
+        if len(x.shape) != 2 or x.shape[1] != 1:
+            raise ValueError('x must have the shape ({}, 1)'.format(
+                x.shape[0])
+                )
         try:
             pdf = np.exp(
                 -0.5 * (x - self.mean).T @
