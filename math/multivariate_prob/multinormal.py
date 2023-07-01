@@ -41,6 +41,6 @@ class MultiNormal:
             pdf /= np.sqrt((2 * np.pi) ** len(x) * np.linalg.det(self.cov))
         except Exception:
             raise ValueError('x must have the shape ({}, 1)'.format(
-                x.shape[0])
+                self.mean.shape[0])
                 )
         return pdf[0][0]
