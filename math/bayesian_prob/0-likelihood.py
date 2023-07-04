@@ -14,7 +14,7 @@ def likelihood(x, n, P):
 
     likelihood = (n choose x) * p^x * (1 - p)^(n - x)
     """
-    if not isinstance(n, int) or n < 0:
+    if not isinstance(n, int) or n < 1:
         raise ValueError('n must be a positive integer')
     if not isinstance(n, int) or x < 0:
         raise ValueError(
