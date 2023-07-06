@@ -10,6 +10,8 @@ import numpy as np
 def marginal(x, n, P, Pr):
     """
     Calculates the marginal probability of obtaining the data
+
+    Σ(Pr * (b_coeff * P ** x * (1 - P) ** (n - x)))
     """
     if not isinstance(n, int) or n < 1:
         raise ValueError('n must be a positive integer')
