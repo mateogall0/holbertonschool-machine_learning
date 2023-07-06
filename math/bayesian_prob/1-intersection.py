@@ -11,6 +11,8 @@ def intersection(x, n, P, Pr):
     """
     Calculates the intersection of obtaining this data with the various
     hypothetical probabilities
+
+    Pr * (b_coeff * P ** x * (1 - P) ** (n - x))
     """
     if not isinstance(n, int) or n < 1:
         raise ValueError('n must be a positive integer')
@@ -31,4 +33,8 @@ def intersection(x, n, P, Pr):
     if not np.isclose(np.sum(Pr), 1.0):
         raise ValueError("Pr must sum to 1")
 
-    return Pr * P ** x * (1 - P) ** (n - x)
+    b_coeff = np.math.factorial(n) / (
+        np.math.factorial(x) * np.math.factorial(n - x)
+    )
+
+    return Pr * (b_coeff * P ** x * (1 - P) ** (n - x))
