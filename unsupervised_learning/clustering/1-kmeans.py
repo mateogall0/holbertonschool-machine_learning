@@ -30,6 +30,8 @@ def kmeans(X, k, iterations=1000):
         clss -- numpy.ndarray of shape (n,) containing the index of the
         cluster in C that each data point belongs to
     """
+    if not isinstance(iterations, int) or iterations < 1:
+        return None, None
     centroids = initialize(X, k)
     if centroids is None:
         return None, None
