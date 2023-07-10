@@ -26,7 +26,7 @@ def initialize(X, k):
     Returns: a numpy.ndarray of shape (k, d) containing the initialized
     centroids for each cluster, or None on failure
     """
-    if k <= 0:
+    if not isinstance(k, int) or k <= 0:
         return
     try:
         min = np.min(X, axis=0)
