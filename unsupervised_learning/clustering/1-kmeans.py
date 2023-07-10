@@ -33,8 +33,6 @@ def kmeans(X, k, iterations=1000):
     min = np.min(X, axis=0)
     max = np.max(X, axis=0)
     centroids = initialize(X, k)
-    if not centroids:
-        return None, None
     for _ in range(iterations):
         prev = np.copy(centroids)
         distances = np.sqrt(((X[:, np.newaxis] - centroids) ** 2).sum(axis=2))
