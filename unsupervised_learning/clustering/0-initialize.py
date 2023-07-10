@@ -28,9 +28,11 @@ def initialize(X, k):
     """
     if k <= 0:
         return
+    try:
+        min = np.min(X, axis=0)
+        max = np.max(X, axis=0)
 
-    min = np.min(X, axis=0)
-    max = np.max(X, axis=0)
-
-    # Obtain the centroids
-    return np.random.uniform(min, max, size=(k, X.shape[1]))
+        # Obtain the centroids
+        return np.random.uniform(min, max, size=(k, X.shape[1]))
+    except Exception:
+        pass
