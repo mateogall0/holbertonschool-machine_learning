@@ -30,12 +30,12 @@ def kmeans(X, k, iterations=1000):
         clss -- numpy.ndarray of shape (n,) containing the index of the
         cluster in C that each data point belongs to
     """
-    min = np.min(X, axis=0)
-    max = np.max(X, axis=0)
     centroids = initialize(X, k)
     if centroids is None:
         return None, None
     try:
+        min = np.min(X, axis=0)
+        max = np.max(X, axis=0)
         for _ in range(iterations):
             prev = np.copy(centroids)
             distances = np.sqrt(((X[:, np.newaxis] - centroids) ** 2).sum(axis=2))
