@@ -33,22 +33,26 @@ def kmeans(X, k, iterations=1000):
     min = np.min(X, axis=0)
     max = np.max(X, axis=0)
     centroids = initialize(X, k)
-    for _ in range(iterations):
-        prev = np.copy(centroids)
-        distances = np.sqrt(((X[:, np.newaxis] - centroids) ** 2).sum(axis=2))
-        clss = np.argmin(distances, axis=1)
+    if centroids is None:
+        return None, None
+    try:
+        for _ in range(iterations):
+            prev = np.copy(centroids)
+            distances = np.sqrt(((X[:, np.newaxis] - centroids) ** 2).sum(axis=2))
+            clss = np.argmin(distances, axis=1)
 
-        # Update centroids
-        for i in range(k):
-            if np.sum(clss == i) == 0:
-                centroids[i] = np.random.uniform(min, max)
-                continue
-            centroids[i] = np.mean(X[clss == i], axis=0)
+            # Update centroids
+            for i in range(k):
+                if np.sum(clss == i) == 0:
+                    centroids[i] = np.random.uniform(min, max)
+                    continue
+                centroids[i] = np.mean(X[clss == i], axis=0)
 
-        if np.all(prev == centroids):
-            # No change in centroids, convergence reached
-            return centroids, clss
-
+            if np.all(prev == centroids):
+                # No change in centroids, convergence reached
+                return centroids, clss
+    except Exception:
+        pass
     # Maximum iterations reached without convergence
     return None, None
 
