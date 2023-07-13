@@ -33,9 +33,10 @@ def kmeans(X, k, iterations=1000):
     try:
         centroids = initialize(X, k)
         for _ in range(iterations):
-            centroids_copy = centroids.copy()
-            points_centroids_distance = np.sqrt(np.sum((X - centroids[:, np.newaxis]) ** 2, axis=2))
-            clss = np.argmin(points_centroids_distance, axis=0)
+            c = centroids.copy()
+            distance = np.sqrt(np.sum(
+                (X - centroids[:, np.newaxis]) ** 2, axis=2))
+            clss = np.argmin(distance, axis=0)
 
             for j in range(k):
                 if len(X[clss == j]) == 0:
@@ -43,14 +44,16 @@ def kmeans(X, k, iterations=1000):
                 else:
                     centroids[j] = np.mean(X[clss == j], axis=0)
 
-            points_centroids_distance = np.sqrt(np.sum((X - centroids[:, np.newaxis]) ** 2, axis=2))
-            clss = np.argmin(points_centroids_distance, axis=0)
-            if np.all(centroids_copy == centroids):
+            distance = np.sqrt(np.sum(
+                (X - centroids[:, np.newaxis]) ** 2, axis=2))
+            clss = np.argmin(distance, axis=0)
+            if np.all(c == centroids):
                 break
 
         return centroids, clss
     except Exception:
         return None, None
+
 
 def initialize(X, k):
     """
