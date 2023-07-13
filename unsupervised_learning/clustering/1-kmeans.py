@@ -32,9 +32,11 @@ def kmeans(X, k, iterations=1000):
     """
     if not isinstance(iterations, int) or iterations < 1:
         return None, None
+    clss = None
     centroids = initialize(X, k)
     if centroids is None:
         return None, None
+
     try:
         for _ in range(iterations):
             prev = np.copy(centroids)
@@ -43,16 +45,14 @@ def kmeans(X, k, iterations=1000):
 
             # Update centroids
             for i in range(k):
-                if np.sum(clss == i) == 0:
+                if np.sum(clss == i) == 0 or np.isnan(centroids[i]).any():
                     centroids[i] = np.random.uniform(
                         np.min(X, axis=0), np.max(X, axis=0))
                 else:
                     centroids[i] = np.mean(X[clss == i], axis=0)
-
             if np.all(prev == centroids):
                 # No change in centroids, convergence reached
                 return centroids, clss
-
     except Exception:
         return None, None
 
