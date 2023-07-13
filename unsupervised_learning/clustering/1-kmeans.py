@@ -32,31 +32,27 @@ def kmeans(X, k, iterations=1000):
     """
     if not isinstance(iterations, int) or iterations < 1:
         return None, None
-    clss = None
+
+    clss = None  # Initialize clss
+
     centroids = initialize(X, k)
-    if centroids is None:
-        return None, None
 
-    try:
-        for _ in range(iterations):
-            prev = np.copy(centroids)
-            distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
-            clss = np.argmin(distances, axis=1)
+    for i in range(iterations):
+        centroids_copy = centroids.copy()
+        points_centroids_distance = np.sqrt(np.sum((X - centroids[:, np.newaxis]) ** 2, axis=2))
+        clss = np.argmin(points_centroids_distance, axis=0)
 
-            # Update centroids
-            for i in range(k):
-                if np.sum(clss == i) == 0 or np.isnan(centroids[i]).any():
-                    centroids[i] = np.random.uniform(
-                        np.min(X, axis=0), np.max(X, axis=0))
-                else:
-                    centroids[i] = np.mean(X[clss == i], axis=0)
-            if np.all(prev == centroids):
-                # No change in centroids, convergence reached
-                return centroids, clss
-    except Exception:
-        return None, None
+        for j in range(k):
+            if len(X[clss == j]) == 0:
+                centroids[j] = initialize(X, 1)
+            else:
+                centroids[j] = np.mean(X[clss == j], axis=0)
 
-    # Maximum iterations reached without convergence
+        points_centroids_distance = np.sqrt(np.sum((X - centroids[:, np.newaxis]) ** 2, axis=2))
+        clss = np.argmin(points_centroids_distance, axis=0)
+        if np.all(centroids_copy == centroids):
+            break
+
     return centroids, clss
 
 
