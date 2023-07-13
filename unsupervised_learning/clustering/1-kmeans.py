@@ -30,31 +30,27 @@ def kmeans(X, k, iterations=1000):
         clss -- numpy.ndarray of shape (n,) containing the index of the
         cluster in C that each data point belongs to
     """
-    if not isinstance(iterations, int) or iterations < 1:
+    try:
+        centroids = initialize(X, k)
+        for _ in range(iterations):
+            centroids_copy = centroids.copy()
+            points_centroids_distance = np.sqrt(np.sum((X - centroids[:, np.newaxis]) ** 2, axis=2))
+            clss = np.argmin(points_centroids_distance, axis=0)
+
+            for j in range(k):
+                if len(X[clss == j]) == 0:
+                    centroids[j] = initialize(X, 1)
+                else:
+                    centroids[j] = np.mean(X[clss == j], axis=0)
+
+            points_centroids_distance = np.sqrt(np.sum((X - centroids[:, np.newaxis]) ** 2, axis=2))
+            clss = np.argmin(points_centroids_distance, axis=0)
+            if np.all(centroids_copy == centroids):
+                break
+
+        return centroids, clss
+    except Exception:
         return None, None
-
-    clss = None  # Initialize clss
-
-    centroids = initialize(X, k)
-
-    for i in range(iterations):
-        centroids_copy = centroids.copy()
-        points_centroids_distance = np.sqrt(np.sum((X - centroids[:, np.newaxis]) ** 2, axis=2))
-        clss = np.argmin(points_centroids_distance, axis=0)
-
-        for j in range(k):
-            if len(X[clss == j]) == 0:
-                centroids[j] = initialize(X, 1)
-            else:
-                centroids[j] = np.mean(X[clss == j], axis=0)
-
-        points_centroids_distance = np.sqrt(np.sum((X - centroids[:, np.newaxis]) ** 2, axis=2))
-        clss = np.argmin(points_centroids_distance, axis=0)
-        if np.all(centroids_copy == centroids):
-            break
-
-    return centroids, clss
-
 
 def initialize(X, k):
     """
