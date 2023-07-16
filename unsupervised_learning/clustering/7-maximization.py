@@ -13,7 +13,9 @@ def maximization(X, g):
     """
     try:
         n, d = X.shape
-        k, _ = g.shape
+        k, n1 = g.shape
+        if n != n1:
+            return None, None, None
 
         Nk = np.sum(g, axis=1)
         pi = Nk / n
