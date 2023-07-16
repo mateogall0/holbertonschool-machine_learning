@@ -13,6 +13,8 @@ def initialize(X, k):
     Initializes variables for a Gaussian Mixture Model
     """
     try:
+        if len(X.shape) != 2:
+            return None, None, None
         return (np.full((k,), 1/k),
                 kmeans(X, k)[0],
                 np.tile(np.eye(X.shape[1]), (k, 1, 1)))
