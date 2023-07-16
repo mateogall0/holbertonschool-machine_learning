@@ -21,7 +21,7 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
         g, lhood = expectation(X, pi, m, S)
         pi, m, S = maximization(X, g)
         if verbose and i % 10 == 0:
-            print(f"Log Likelihood after {i} iterations: {lhood}")
+            print("Log Likelihood after {} iterations: {}".format(i, lhood))
         if lhood >= tol:
             break
     return pi, m, S, g, lhood
