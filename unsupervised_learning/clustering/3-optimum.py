@@ -27,7 +27,7 @@ def optimum_k(X, kmin=1, kmax=None, iterations=1000):
             results.append((clusters, centroids))
             var = variance(X, centroids)
             if len(d_vars) == 0:
-                min_var = 0
+                min_var = var
             d_vars.append(min_var - var)
 
         return results, d_vars
