@@ -14,7 +14,7 @@ def maximization(X, g):
     try:
         n, d = X.shape
         k, n1 = g.shape
-        if n != n1:
+        if n != n1 or np.abs(np.sum(g, axis=0) - 1).max() > 1e-10:
             return None, None, None
 
         Nk = np.sum(g, axis=1)
