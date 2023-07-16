@@ -20,9 +20,10 @@ def expectation(X, pi, m, S):
         for i in range(k):
             g[i] = pi[i] * pdf(X, m[i], S[i])
         marginal = np.sum(g, axis=0)
+
         g /= np.sum(g, axis=0)
         lhood = np.sum(np.log(marginal))
 
         return g, lhood
-    except Exception:
+    except (RuntimeWarning, Exception):
         return None, None
