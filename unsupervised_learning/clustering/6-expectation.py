@@ -19,6 +19,8 @@ def expectation(X, pi, m, S):
         if (k > n or k != m.shape[0] or k != S.shape[0] or
                 d != m.shape[1] or d != S.shape[1] or d != S.shape[2]):
             return None, None
+        if not np.allclose(np.sum(pi), 1):
+            return None, None
 
         g = np.zeros((k, n))
         for i in range(k):
