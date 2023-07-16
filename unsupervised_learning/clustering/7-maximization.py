@@ -26,4 +26,4 @@ def maximization(X, g):
             S[i] = Wdiff.T @ diff / Nk[i]
         return pi, m, S
     except Exception:
-        return None, None
+        return None, None, None
