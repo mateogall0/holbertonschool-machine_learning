@@ -15,14 +15,14 @@ def optimum_k(X, kmin=1, kmax=None, iterations=1000):
     """
     try:
         if kmax is None:
-            kmax = int(np.sqrt(len(X) / 2))
-        if kmin < 1 or kmax < kmin:
+            kmax = X.shape[0]
+        if kmin < 1 or kmax <= kmin or kmax < 1:
             return None, None
 
         results = []
         d_vars = []
         min_var = 0
-        for k in range(kmin, kmax, 1):
+        for k in range(kmin, kmax + 1):
             centroids, clusters = kmeans(X, k, iterations)
             results.append((clusters, centroids))
             var = variance(X, centroids)
