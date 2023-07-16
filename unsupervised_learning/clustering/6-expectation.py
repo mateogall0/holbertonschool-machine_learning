@@ -14,7 +14,11 @@ def expectation(X, pi, m, S):
     """
     try:
         k, = pi.shape
-        n, _ = X.shape
+        n, d = X.shape
+
+        if (k > n or k != m.shape[0] or k != S.shape[0] or
+                d != m.shape[1] or d != S.shape[1] or d != S.shape[2]):
+            return None, None
 
         g = np.zeros((k, n))
         for i in range(k):
@@ -25,5 +29,5 @@ def expectation(X, pi, m, S):
         lhood = np.sum(np.log(marginal))
 
         return g, lhood
-    except (RuntimeWarning, Exception):
+    except Exception:
         return None, None
