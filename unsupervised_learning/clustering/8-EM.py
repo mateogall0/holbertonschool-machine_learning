@@ -15,7 +15,7 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
     Performs the expectation maximization for a GMM
     """
     pi, m, S = initialize(X, k)
-    for i in range(iterations):
+    for i in range(iterations + 1):
         if pi is None or m is None or S is None:
             return None, None, None, None, None
         g, lhood = expectation(X, pi, m, S)
@@ -24,7 +24,7 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
             print("Log Likelihood after {} iterations: {}".format(
                 i, round(lhood, 5)))
             break
-        if verbose and (i % 10 == 0 or i + 1 == iterations):
+        if verbose and (i % 10 == 0 or i + 1 % iterations == 0):
             print("Log Likelihood after {} iterations: {}".format(
                 i, round(lhood, 5)))
 
