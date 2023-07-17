@@ -16,7 +16,7 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
     """
     if (not isinstance(verbose, bool) or
             not isinstance(tol, float) or
-            not isinstance(iterations, int)):
+            not isinstance(iterations, int) or iterations < 1):
         return None, None, None, None, None
 
     pi, m, S = initialize(X, k)
