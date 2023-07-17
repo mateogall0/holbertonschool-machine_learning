@@ -13,26 +13,29 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     Finds the best number of clusters for a GMM using the Bayesian Information
     Criterion
     """
-    n, d = X.shape
-    if kmax is None:
-        kmax = n
-    kHistory = list(range(kmin, kmax+1))
-    resultsHistory = []
-    lhoodHistory = []
-    bicHistory = []
-    for k in range(kmin, kmax+1):
-        pi, m, S, g, lhood = expectation_maximization(
-            X, k, iterations, tol, verbose
-        )
-        p = d * k + (d * k * (d + 1) / 2) + k - 1
-        BIC = p * np.log(n) - 2 * lhood
+    try:
+        n, d = X.shape
+        if kmax is None:
+            kmax = n
+        kHistory = list(range(kmin, kmax+1))
+        resultsHistory = []
+        lhoodHistory = []
+        bicHistory = []
+        for k in range(kmin, kmax+1):
+            pi, m, S, g, lhood = expectation_maximization(
+                X, k, iterations, tol, verbose
+            )
+            p = d * k + (d * k * (d + 1) / 2) + k - 1
+            BIC = p * np.log(n) - 2 * lhood
 
-        resultsHistory.append((pi, m, S))
-        lhoodHistory.append(lhood)
-        bicHistory.append(BIC)
+            resultsHistory.append((pi, m, S))
+            lhoodHistory.append(lhood)
+            bicHistory.append(BIC)
 
-        i = np.argmin(bicHistory)
-        best_k = kHistory[i]
-        best_result = resultsHistory[i]
+            i = np.argmin(bicHistory)
+            best_k = kHistory[i]
+            best_result = resultsHistory[i]
 
-    return best_k, best_result, np.array(lhoodHistory), np.array(bicHistory)
+        return best_k, best_result, np.array(lhoodHistory), np.array(bicHistory)
+    except Exception:
+        return None, None, None, None
