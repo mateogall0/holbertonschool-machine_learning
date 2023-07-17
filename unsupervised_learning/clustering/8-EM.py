@@ -26,7 +26,7 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
         if pi is None or m is None or S is None:
             return None, None, None, None, None
         g, lhood = expectation(X, pi, m, S)
-        if i == iterations:
+        if verbose and i == iterations:
             print("Log Likelihood after {} iterations: {}".format(
                 i, round(lhood, 5)))
             break
