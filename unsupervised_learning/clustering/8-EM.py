@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-EM
+Expectation Maximization
 """
 
 
@@ -14,6 +14,11 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
     """
     Performs the expectation maximization for a GMM
     """
+    if (not isinstance(verbose, bool) or
+            not isinstance(tol, float) or
+            not isinstance(iterations, int)):
+        return None, None, None, None, None
+
     pi, m, S = initialize(X, k)
     previous = None
     for i in range(iterations + 1):
