@@ -17,6 +17,8 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         n, d = X.shape
         if kmax is None:
             kmax = n
+            if kmax >= kmin:
+                return None, None, None, None
         kHistory = list(range(kmin, kmax+1))
         resultsHistory = []
         lhoodHistory = []
