@@ -12,7 +12,7 @@ def backward(Observation, Emission, Transition, Initial):
     Performs the backward algorithm for a hidden markov model
     """
     T, = Observation.shape
-    N, M = Emission.shape
+    N, _ = Emission.shape
 
     B = np.zeros((N, T))
     B[:, T - 1] = 1
