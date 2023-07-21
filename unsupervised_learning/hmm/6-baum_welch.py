@@ -12,7 +12,7 @@ def forward(Observation, Emission, Transition, Initial):
     Performs the forward algorithm for a hidden markov model
     """
     T, = Observation.shape
-    N, M = Emission.shape
+    N, _ = Emission.shape
 
     if Transition.shape != (N, N):
         return None, None
@@ -46,38 +46,38 @@ def backward(Observation, Emission, Transition, Initial):
     return np.sum(Initial[:, 0] * Emission[:, Observation[0]] * B[:, 0]), B
 
 
-
 def baum_welch(Observations, Transition, Emission, Initial, iterations=1000):
     """
     Performs the Baum-Welch algorithm for a hidden markov model
     """
     T, = Observations.shape
-    N, M = Emission.shape
+    M, N = Emission.shape
 
     for _ in range(iterations):
         P, alpha = forward(Observations, Emission, Transition, Initial)
         _, beta = backward(Observations, Emission, Transition, Initial)
         P = np.sum(alpha[:, T - 1])
 
-        xi = np.zeros((N, N, T - 1))
-        gamma = np.zeros((N, T))
+        xi = np.zeros((M, M, T - 1))
+        gamma = np.zeros((M, T))
 
         for t in range(T - 1):
-            for i in range(N):
-                for j in range(N):
-                    xi[i, j, t] = alpha[i, t] * Transition[i, j] * Emission[j, Observations[t + 1]] * beta[j, t + 1]
+            for i in range(M):
+                for j in range(M):
+                    xi[i, j, t] = alpha[i, t] * Transition[
+                        i, j] * Emission[j, Observations[t + 1]]
             xi[:, :, t] /= np.sum(xi[:, :, t])
             gamma[:, t] = np.sum(xi[:, :, t], axis=1)
 
         gamma[:, T - 1] = alpha[:, T - 1] / P
         Initial = gamma[:, 0].reshape(-1, 1)
 
-        for i in range(N):
-            for j in range(N):
+        for i in range(M):
+            for j in range(M):
                 Transition[i, j] = np.sum(xi[i, j, :]) / np.sum(gamma[i, :-1])
 
-        for i in range(N):
-            for k in range(M):
+        for i in range(M):
+            for k in range(N):
                 mask = (Observations == k)
                 Emission[i, k] = np.sum(gamma[i, mask]) / np.sum(gamma[i, :])
 
