@@ -62,4 +62,5 @@ class BayesianOptimization:
             X_next = np.argmin(self.gp.Y)
         else:
             X_next = np.argmax(self.gp.Y)
+        self.gp.X = np.delete(self.gp.X, -1, axis=0)
         return self.gp.X[X_next], self.gp.Y[X_next]
