@@ -12,10 +12,10 @@ class GaussianProcess:
     Rpresents a noiseless 1D Gaussian process
     """
 
-    def __init__(self, X_init, Y_init, length=1, sigma_f=1):
+    def __init__(self, X_init, Y_init, l=1, sigma_f=1):
         self.X = X_init
         self.Y = Y_init
-        self.l = length
+        self.l = l
         self.sigma_f = sigma_f
         self.K = self.kernel(X_init, X_init)
 
