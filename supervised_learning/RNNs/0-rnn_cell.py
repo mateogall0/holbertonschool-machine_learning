@@ -12,9 +12,9 @@ class RNNCell:
     Represents a cell of a simple RNN
     """
     def __init__(self, i, h, o):
-        self.Wh = np.random.rand(i + h, h)
+        self.Wh = np.random.normal(size=(i + h, h))
         self.bh = np.zeros((1, h))
-        self.Wy = np.random.randn(h, o)
+        self.Wy = np.random.normal(size=(h, o))
         self.by = np.zeros((1, o))
 
     def forward(self, h_prev, x_t):
