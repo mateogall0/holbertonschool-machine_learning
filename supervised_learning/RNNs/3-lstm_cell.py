@@ -32,12 +32,12 @@ class LSTMCell:
         performs forward propagation for one time step
         """
         concat_input = np.concatenate((h_prev, x_t), axis=1)
-        ft = self.sigmoid(np.dot(concat_input, self.Wf) + self.bf)
-        ut = self.sigmoid(np.dot(concat_input, self.Wu) + self.bu)
-        c_tilde = np.tanh(np.dot(concat_input, self.Wc) + self.bc)
+        ft = self.sigmoid(np.matmul(concat_input, self.Wf) + self.bf)
+        ut = self.sigmoid(np.matmul(concat_input, self.Wu) + self.bu)
+        c_tilde = np.tanh(np.matmul(concat_input, self.Wc) + self.bc)
         c_next = ft * c_prev + ut * c_tilde
-        ot = self.sigmoid(np.dot(concat_input, self.Wo) + self.bo)
+        ot = self.sigmoid(np.matmul(concat_input, self.Wo) + self.bo)
         h_next = ot * np.tanh(c_next)
-        y = np.dot(h_next, self.Wy) + self.by
+        y = np.matmul(h_next, self.Wy) + self.by
 
         return h_next, c_next, y
