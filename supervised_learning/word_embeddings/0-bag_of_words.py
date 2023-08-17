@@ -24,5 +24,5 @@ def bag_of_words(sentences, vocab=None):
         words = sentence.split()
         for word in words:
             if word in word_to_index:
-                embeddings[i, word_to_index[word]] = 1
+                embeddings[i, word_to_index[word]] += 1
     return embeddings, vocab
