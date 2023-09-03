@@ -20,12 +20,14 @@ class SelfAttention(tf.keras.layers.Layer):
     def call(self, s_prev, hidden_states):
         """Call"""
         s_prev_with_time_axis = tf.expand_dims(s_prev, 1)
-        
-        score = self.V(tf.nn.tanh(self.W(s_prev_with_time_axis) + self.U(hidden_states)))
-        
+
+        score = self.V(
+            tf.nn.tanh(self.W(s_prev_with_time_axis) + self.U(hidden_states))
+        )
+
         attention_weights = tf.nn.softmax(score, axis=1)
-        
+
         context = attention_weights * hidden_states
         context = tf.reduce_sum(context, axis=1)
-        
+
         return context, attention_weights
