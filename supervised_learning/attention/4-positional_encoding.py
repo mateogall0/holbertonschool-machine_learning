@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Positional Encoding
+"""
 
 
 import numpy as np
