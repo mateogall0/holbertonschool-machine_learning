@@ -18,7 +18,9 @@ class SelfAttention(tf.keras.layers.Layer):
         self.V = tf.keras.layers.Dense(1)
 
     def call(self, s_prev, hidden_states):
-        """Call"""
+        """
+        Call
+        """
         s_prev_with_time_axis = tf.expand_dims(s_prev, 1)
 
         score = self.V(
