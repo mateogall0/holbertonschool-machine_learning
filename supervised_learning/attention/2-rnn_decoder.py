@@ -31,6 +31,6 @@ class RNNDecoder(tf.keras.layers.Layer):
         context, _ = self.attention(s_prev, hidden_states)
         context = tf.expand_dims(context, 1)
         x = tf.concat([context, x], axis=-1)
-        outputs, state = self.gru(x)
+        outputs, state = self.gru(x, initial_state=s_prev)
         y = self.F(outputs)
         return y, state
