@@ -45,9 +45,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         V = self.split_heads(V, batch_size)
 
         output, weights = sdp_attention(Q, K, V, mask)
-
         output = tf.transpose(output, perm=[0, 2, 1, 3])
         output = tf.reshape(output, (batch_size, -1, self.dm))
-        output = self.linear(output)
 
-        return output, weights
+        return self.linear(output), weights
