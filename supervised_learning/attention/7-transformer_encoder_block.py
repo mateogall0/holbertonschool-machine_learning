@@ -26,12 +26,12 @@ class EncoderBlock(tf.keras.layers.Layer):
         """
         Call
         """
-        attn_output, _ = self.mha(x, x, x, mask)
-        attn_output = self.dropout1(attn_output, training=training)
-        out1 = self.layernorm1(x + attn_output)
+        attention, _ = self.mha(x, x, x, mask)
+        dropout = self.dropout1(attention, training=training)
+        attention_x_norm = self.layernorm1(x + dropout)
 
-        hidden_output = self.dense_hidden(out1)
-        out2 = self.dropout2(hidden_output, training=training)
-        out2 = self.layernorm2(out1 + out2)
+        hidden = self.dense_hidden(attention_x_norm)
+        output = self.dense_output(hidden)
 
-        return self.dense_output(out2)
+        output = self.dropout2(output)
+        return self.layernorm2(attention_x_norm + output)
