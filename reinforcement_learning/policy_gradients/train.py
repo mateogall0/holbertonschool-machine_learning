@@ -29,7 +29,6 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, initial_weight=None, sho
 
             state = next_state
 
-        # Update the policy weights using the policy gradient theorem
         for t, gradient in enumerate(episode_gradients):
             G = np.sum([gamma**i * episode_score for i in range(t, len(episode_states))])
             weight += alpha * G * gradient
