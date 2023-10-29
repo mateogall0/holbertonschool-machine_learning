@@ -3,7 +3,7 @@
 from policy_gradient import policy_gradient
 import numpy as np
 
-def train(env, nb_episodes, alpha=0.000045, gamma=0.98, initial_weight=None):
+def train(env, nb_episodes, alpha=0.000045, gamma=0.98, initial_weight=None, show_result=False):
     scores = []
     
     if initial_weight is None:
@@ -35,6 +35,9 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, initial_weight=None):
             weight += alpha * G * gradient
 
         scores.append(episode_score)
-        print(f"Episode {episode}/{nb_episodes}, Score: {episode_score}", end="\r", flush=False)
+        print(f"Episode {episode}/{nb_episodes}, Score: {episode_score}", end="\r", flush=True)
+
+        if show_result and episode % 1000 == 0:
+            env.render()
 
     return scores
