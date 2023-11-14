@@ -12,7 +12,7 @@ import requests
 
 
 def get_json(url):
-    """Json"""
+    """Request JSON"""
     response = requests.get(url)
     return response.json()
 
