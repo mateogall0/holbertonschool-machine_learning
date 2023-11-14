@@ -31,14 +31,14 @@ def get_upcoming_launch():
 
 def get_rocket_name(rocket_id):
     """Rocket name"""
-    url = f"https://api.spacexdata.com/v4/rockets/{rocket_id}"
+    url = "https://api.spacexdata.com/v4/rockets/{}".format(rocket_id)
     rocket_data = get_json(url)
     return rocket_data['name']
 
 
 def get_launchpad_info(launchpad_id):
     """Launchpad info"""
-    url = f"https://api.spacexdata.com/v4/launchpads/{launchpad_id}"
+    url = "https://api.spacexdata.com/v4/launchpads/{}".format(launchpad_id)
     launchpad_data = get_json(url)
     return launchpad_data['name'], launchpad_data['locality']
 
