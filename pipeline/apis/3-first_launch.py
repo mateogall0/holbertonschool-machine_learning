@@ -53,5 +53,8 @@ if __name__ == '__main__':
         next_launch['launchpad']
     )
 
-    print(f"{name} ({date}) {rocket_name} - {launchpad_name}\
-          ({launchpad_loc})")
+    print("{} ({}) {} - {} ({})".format(name,
+                                        date,
+                                        rocket_name,
+                                        launchpad_name,
+                                        launchpad_loc))
