@@ -1,6 +1,6 @@
 -- task 10
 SELECT
-  tv_genres.genre AS genre,
+  tv_genres.genre_name AS genre,
   COUNT(tv_shows.id) AS number_of_shows
 FROM
   tv_genres
