@@ -1,5 +1,5 @@
--- task 6
-SELECT city, AVG(value) AS avg_temp
+-- task 7
+SELECT state, MAX(value) AS max_temp
 FROM temperatures
-GROUP BY city
-ORDER BY avg_temp DESC;
+GROUP BY state
+ORDER BY state DESC;
