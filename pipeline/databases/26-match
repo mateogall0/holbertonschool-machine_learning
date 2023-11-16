@@ -1,0 +1,2 @@
+// task 26
+db.school.find({ "name": "Holberton school" }).forEach(printjson)
