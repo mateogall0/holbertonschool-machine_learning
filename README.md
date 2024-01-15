@@ -5,6 +5,7 @@ All of these projects where done using Python and libraries like NumPY, TensorFl
 <p align="center">
   <img src="https://cdn-icons-png.flaticon.com/512/8345/8345929.png" width="300"/>
 </p>
+
 ## About Machine Learning
 <p>Machine learning is a subfield of artificial intelligence that focuses on developing algorithms and models that enable computers to learn from data and make predictions or decisions without being explicitly programmed.</p>
 <p>Instead of relying on explicit instructions, machine learning systems use statical techniques to automatically learn patterns and relationships within the data.</p>
