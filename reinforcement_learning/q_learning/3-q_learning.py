@@ -16,7 +16,7 @@ def train(env, Q, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99,
         step = 0
         while not done and step < max_steps:
             action = epsilon_greedy(Q, state, epsilon)
-            new_state, reward, done, truncated, info = env.step(action)
+            new_state, reward, done, _, _ = env.step(action)
             Q[state, action] = (
                 Q[state, action] + alpha *
                 (reward + gamma * np.max(Q[new_state]) - Q[state, action])
