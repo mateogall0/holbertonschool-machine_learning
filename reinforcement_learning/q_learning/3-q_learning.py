@@ -2,6 +2,7 @@
 import numpy as np
 epsilon_greedy = __import__('2-epsilon_greedy').epsilon_greedy
 
+
 def train(env, Q, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99,
           epsilon=1, min_epsilon=0.1, epsilon_decay=0.05):
     """
@@ -16,11 +17,13 @@ def train(env, Q, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99,
         while not done and step < max_steps:
             action = epsilon_greedy(Q, state, epsilon)
             new_state, reward, done, truncated, info = env.step(action)
-            Q[state, action] = Q[state, action] + alpha * (reward + gamma * np.max(Q[new_state]) - Q[state, action])
+            Q[state, action] = (
+                Q[state, action] + alpha *
+                (reward + gamma * np.max(Q[new_state]) - Q[state, action])
+            )
             state = new_state
-            if reward:
-                total_rewards[-1] = reward
             step += 1
-            if epsilon > min_epsilon:
-                epsilon -= epsilon_decay
+            if reward > 0:
+                total_rewards[-1] = reward
+            epsilon = max(min_epsilon, epsilon * epsilon_decay)
     return Q, total_rewards
