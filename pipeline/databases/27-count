@@ -1,0 +1,2 @@
+// task 27
+db.school.count()

@@ -1,0 +1,2 @@
+-- Task #0
+CREATE DATABASE IF NOT EXISTS db_0;
