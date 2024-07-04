@@ -2,7 +2,6 @@
 import gym
 from keras.layers import Dense, Flatten, Conv2D, Permute, Input
 from keras.models import Model
-from keras.optimizers import Adam
 from rl.agents.dqn import DQNAgent
 from rl.memory import SequentialMemory
 from rl.policy import EpsGreedyQPolicy
