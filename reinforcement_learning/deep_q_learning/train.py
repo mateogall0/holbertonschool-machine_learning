@@ -6,10 +6,9 @@ from keras.optimizers import Adam
 from rl.agents.dqn import DQNAgent
 from rl.memory import SequentialMemory
 from rl.policy import EpsGreedyQPolicy
-import numpy as np
 
 WINDOW_LENGTH = 4
-env = gym.make('Breakout-v0')  # Adjust the environment name if necessary
+env = gym.make('Breakout-v5')
 INPUT_SHAPE = env.observation_space.shape
 nb_actions = env.action_space.n
 
